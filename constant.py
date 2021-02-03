@@ -19,19 +19,27 @@ STEERINGAXIS = 11
 ANALOG = 1
 DIGITAL = 0
 
+ID_PACKET_LENGTH = 23
+GPIO_CONFIG_LENGTH = 13  # length for each gpio config
+
 # Incoming serial leading bytes
 HEADER_INPUT_CONFIG = "C"
-HEADER_INPUT_VALUES = "V"
+HEADER_INPUT_VALUES = 84
 HEADER_DEVICE_ID = "Q"
 HEADER_HELP = "H"
-HEADER_HANDSHAKE_RESPONSE = 0x11
+HEADER_HANDSHAKE_RESPONSE = 73
+HEADER_ID_RESPONSE = 77
+HEADER_REQUEST_GPIO_CONFIG_RESPONSE = 81
+HEADER_SEND_GPIO_CONFIG_UPDATE_RESPONSE = 83
 
 # Outgoing serial leading bytes
-HEADER_HANDSHAKE = 0x10
+HEADER_HANDSHAKE = 74
+HEADER_REQUEST_ID = 76
+HEADER_REQUEST_GPIO_CONFIG = 80  # subdevice address should follow
+HEADER_SEND_GPIO_CONFIG_UPDATE = 82  # single gpio update to device
 
 
-
-list_device_types = ["UNKNOWN", "ATmega328", "ATmega32U4"]
+list_device_types = ["UNKNOWN", "ATmega328", "ATmega32U4", "ATmega2560"]
 
 list_input_modes = ["INPUT", "OUTPUT", "INPUT_PULLUP"]
 

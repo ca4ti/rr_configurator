@@ -2,20 +2,33 @@ import constant
 
 class RR_Device():
     def __init__(self):
-        self.device_name = "New Controller"
-        self.firmware_version = ""
-        self.device_type = 0
+        self.device_name = "unknown device"
+        self.firmware_version = -1
+        self.microcontroller = -1
         self.sub_device_count = 0
         self.address = 0        
         self.gpios = []
 
+        self.widgets = {}
+
+        
+
+    def init_from_header(self, header):
+        self.device_name = header["device_name"]
+        self.firmware_version = header["firmware_version"]
+        self.microcontroller = header["device_type"]
+        self.sub_device_count = header["sub_device_count"]
+        self.address = header["address"]
+
+        self.init_gpios()
+
+    # GPIO count and labels based on microcontroller presets
+    def init_gpios(self):
         for i in range(0, len(constant.pro_micro_pin_idx)):
             gpio = RR_GPIO(self.address, i)
             gpio.pin_number = constant.pro_micro_pin_idx[i]
             gpio.pin_label = constant.pro_micro_pin_label[i]
             self.gpios.append(gpio)
-
-    
 
 
 class RR_GPIO():

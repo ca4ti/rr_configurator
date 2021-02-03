@@ -58,6 +58,9 @@ class GUI_SerialSelectPage():
 
         self.hide()
 
+    def set_error_message(self, message):
+        self.controls["warning"].setText(message)
+        self.controls["warning"].show()    
 
     def hide(self):
         self.controls["desc"].hide()
