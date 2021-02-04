@@ -92,6 +92,19 @@ class SerialConnection:
             if time.time() - self.actionStartTime > HANDSHAKE_TIMEOUT:
                 self.on_handshake_failed()
 
+    def commit_to_eeprom(self):        
+        ba = bytearray()
+        ba.append(constant.HEADER_COMMIT_TO_EEPROM)
+        
+        ba.append(0)  # address
+        ba.append(ord('\r'))
+        ba.append(ord('\n'))  # 18 bytes
+
+        b = bytes(ba)
+        self.serial.write(b)
+        self.start_action(SerAction.CONNECTED)
+
+
     def decode_id_packet(self, data):
         if len(data) != constant.ID_PACKET_LENGTH:
             print("ERROR: Incorrect ID packet length " + str(len(data)))

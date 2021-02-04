@@ -24,6 +24,13 @@ class GUI_DevicePage():
         widget.clicked.connect(lambda: self.win.reset(""))
         device.widgets["btn_disconnect"] = widget
 
+        widget = QPushButton(self.win)
+        widget.setText("Commit to EEPROM")
+        widget.move(self.offset[0]+ 620, self.offset[1]+25)
+        widget.show()
+        widget.clicked.connect(lambda: self.win.commit_to_eeprom())
+        device.widgets["btn_commit_to_eeprom"] = widget
+
         # Device Details
         widget = QLabel(self.win)
         widget.setText("Choose Device")

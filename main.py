@@ -58,6 +58,9 @@ class Window(QWidget):
         self.connect_page.show()
         self.connect_page.set_error_message(error)
 
+    def commit_to_eeprom(self):
+        self.ser.commit_to_eeprom()
+
     def update(self):
         self.ser.update()
 
