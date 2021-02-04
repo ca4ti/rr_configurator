@@ -36,6 +36,7 @@ HEADER_REQUEST_ID = 76
 HEADER_REQUEST_GPIO_CONFIG = 80  # subdevice address should follow
 HEADER_SEND_GPIO_CONFIG_UPDATE = 82  # single gpio update to device
 HEADER_COMMIT_TO_EEPROM = 85
+HEADER_SELECT_SUB_DEVICE = 87
 
 
 list_device_types = ["UNKNOWN", "ATmega328", "ATmega32U4", "ATmega2560"]

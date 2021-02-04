@@ -31,6 +31,13 @@ class GUI_DevicePage():
         widget.clicked.connect(lambda: self.win.commit_to_eeprom())
         device.widgets["btn_commit_to_eeprom"] = widget
 
+        widget = QPushButton(self.win)
+        widget.setText("SelectSub")
+        widget.move(self.offset[0]+ 420, self.offset[1]+25)
+        widget.show()
+        widget.clicked.connect(lambda: self.win.select_sub_device(0))
+        device.widgets["btn_switch_selected_sub"] = widget
+
         # Device Details
         widget = QLabel(self.win)
         widget.setText("Choose Device")
@@ -39,10 +46,11 @@ class GUI_DevicePage():
         device.widgets["label_sub_device_picker"] = widget
 
         widget = QComboBox(self.win)        
-        widget.addItem("Base_1")        
-        widget.addItem("Stick_1")        
-        widget.addItem("ButtonBox")        
+        widget.addItem(device.device_name)
+        for sub_device in device.sub_devices:
+            widget.addItem(sub_device.device_name)
         widget.move(self.offset[0], self.offset[1]+20)
+        widget.activated[str].connect(partial(self.on_combo_change, 0, "combo_sub_device_picker"))            
         widget.show()
         device.widgets["combo_sub_device_picker"] = widget
 
@@ -234,9 +242,23 @@ class GUI_DevicePage():
             widget.show()
             device.gpios[i].widgets["calibrated_val"] = widget
 
+    def on_change_selected_device(self, sub_device_index):
+        device = self.win.current_device
+        self.win.current_device.selected_sub_device = sub_device_index
+        device.widgets["label_device_name"].setText("Selected Device:\t" + device.get_selected_device_name())
+        device.widgets["label_device_type"].setText("Microcontroller:\t" + device.get_selected_device_type())      
+        device.widgets["label_firmware_version"].setText("Firmware Version:\t" + device.get_selected_firmware_version())
+
+        #self.win.select_sub_device(sub_device_index)
+        self.win.request_device_config(sub_device_index)
+
     def on_combo_change(self, gpio_index, control):
         gpio = self.win.current_device.gpios[gpio_index]
-        if control == "pin_mode":
+
+        if control == "combo_sub_device_picker":
+            self.on_change_selected_device(self.win.current_device.widgets[control].currentIndex())            
+            return
+        elif control == "pin_mode":
             #print(gpio.widgets[control].currentIndex())
             gpio.pin_mode = gpio.widgets[control].currentIndex()
         elif control == "input_type":

@@ -56,8 +56,16 @@ class SerialConnection:
             text = self.serial.readLine().data()
             #print(text)
             
+            
             if text[0] == constant.HEADER_INPUT_VALUES:
                 self.decode_gpio_input_values(text)
+            elif text[0] == constant.HEADER_RECEIVE_TEXT_MESSAGE:
+                print("Received text message from device")
+                print(text.decode())
+                cnt = 0
+                for t in text:
+                    print(str(cnt) + "\t" + str(t))
+                    cnt += 1
             elif text[0] == constant.HEADER_HANDSHAKE_RESPONSE:
                 print("GOT A RESPONSE")
                 self.start_action(SerAction.CONNECTED)
@@ -94,9 +102,8 @@ class SerialConnection:
 
     def commit_to_eeprom(self):        
         ba = bytearray()
-        ba.append(constant.HEADER_COMMIT_TO_EEPROM)
+        ba.append(constant.HEADER_COMMIT_TO_EEPROM)        
         
-        ba.append(0)  # address
         ba.append(ord('\r'))
         ba.append(ord('\n'))  # 18 bytes
 
@@ -104,31 +111,59 @@ class SerialConnection:
         self.serial.write(b)
         self.start_action(SerAction.CONNECTED)
 
+    def request_device_config(self, sub_device_index):
+        ba = QByteArray()
+        ba.append(chr(constant.HEADER_REQUEST_GPIO_CONFIG))
+        ba.append(str(chr(sub_device_index)))
+        ba.append('\r')
+        ba.append('\n')
+        self.serial.write(ba)
+        self.start_action(SerAction.WAITING_ON_GPIO_CONFIG)
+
+    def select_sub_device(self, sub_device_index):
+        ba = bytearray()
+        ba.append(constant.HEADER_SELECT_SUB_DEVICE)
+        
+        ba.append(sub_device_index)  # address
+        ba.append(ord('\r'))
+        ba.append(ord('\n'))  # 18 bytes
+
+        b = bytes(ba)
+        self.serial.write(b)
+        self.start_action(SerAction.CONNECTED)
+        #print("changed subdevice selection to: " + str(sub_device_index))
+
 
     def decode_id_packet(self, data):
-        if len(data) != constant.ID_PACKET_LENGTH:
-            print("ERROR: Incorrect ID packet length " + str(len(data)))
-            print(data)
-            self.win.reset("ERROR: Incorrect ID packet length: " + str(len(data)))
-            return
+        # if len(data) != constant.ID_PACKET_LENGTH:
+        #     print("ERROR: Incorrect ID packet length " + str(len(data)))
+        #     print(data)
+        #     self.win.reset("ERROR: Incorrect ID packet length: " + str(len(data)))
+        #     return
 
         device = {}
         device["device_name"] = data[1: 1+16].decode()
         device["firmware_version"] = data[17]
         device["device_type"] = data[18]
-        device["sub_device_count"] = data[19]
-        device["address"] = data[20]
-
+        device["address"] = data[19]        
+        device["sub_device_count"] = data[20]
         self.win.init_device(device)
-        ba = QByteArray()
-        ba.append(chr(constant.HEADER_REQUEST_GPIO_CONFIG))
-        ba.append(str(chr(0)))
-        # ba[0] = 1#(chr(constant.HEADER_REQUEST_GPIO_CONFIG))
-        # ba[1] = 0
-        ba.append('\r')
-        ba.append('\n')
-        self.serial.write(ba)
-        self.start_action(SerAction.WAITING_ON_GPIO_CONFIG)
+
+        current_byte = 21
+        for i in range(0, device["sub_device_count"]):
+            sub_device = {}
+            sub_device["device_name"] = data[current_byte: current_byte+16].decode()
+            sub_device["firmware_version"] = data[current_byte+16]
+            sub_device["device_type"] = data[current_byte+17]
+            sub_device["address"] = data[current_byte+18]     
+            current_byte += 20
+            self.win.init_sub_device(sub_device)
+
+        self.win.show_device_page()
+
+        # continue to request gpio config for master device
+        self.request_device_config(0)
+        
 
     def decode_gpio_input_values(self, data):
         current_byte = 1
@@ -203,11 +238,6 @@ class SerialConnection:
     def send_gpio_config_update(self, gpio_index):
         print("sedning... " + str(gpio_index))
         gpio = self.win.current_device.gpios[gpio_index]
-
-        # ba = QByteArray()
-        # ba.append(chr(constant.HEADER_SEND_GPIO_CONFIG_UPDATE))
-
-        #b = bytes([constant.HEADER_SEND_GPIO_CONFIG_UPDATE, 0, 100, 180, 255, 13, 10])
         ba = bytearray()
         ba.append(constant.HEADER_SEND_GPIO_CONFIG_UPDATE)
         

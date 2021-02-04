@@ -61,6 +61,9 @@ class Window(QWidget):
     def commit_to_eeprom(self):
         self.ser.commit_to_eeprom()
 
+    def select_sub_device(self, sub_device_index):
+        self.ser.select_sub_device(sub_device_index)
+
     def update(self):
         self.ser.update()
 
@@ -69,14 +72,25 @@ class Window(QWidget):
     def on_handshake_failed(self):
         self.connect_page.show()
 
+    def show_device_page(self):        
+        self.device_page.show()
+
     def init_device(self, data):
         self.current_device = rr_device.RR_Device()
         self.current_device.init_from_header(data)
         print(self.current_device.__dict__)
-        self.device_page.show()
+
+    def init_sub_device(self, data):
+        sub_device = rr_device.RR_Device()
+        sub_device.init_from_header(data)
+        self.current_device.add_sub_device(sub_device)
+        print(data)
 
     def send_gpio_config_update(self, gpio_index):
         self.ser.send_gpio_config_update(gpio_index)
+
+    def request_device_config(self, sub_device_index):
+        self.ser.request_device_config(sub_device_index)
 
     
 

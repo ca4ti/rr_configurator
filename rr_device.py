@@ -8,19 +8,43 @@ class RR_Device():
         self.sub_device_count = 0
         self.address = 0        
         self.gpios = []
+        self.sub_devices = []
+
+        # 0 == this device, subdevices are index+1
+        self.selected_sub_device = 0
 
         self.widgets = {}
 
-        
+    def get_selected_device_name(self):
+        if self.selected_sub_device == 0:
+            return self.device_name
+        else:
+            return self.sub_devices[self.selected_sub_device-1].device_name  
+
+    def get_selected_device_type(self):
+        if self.selected_sub_device == 0:
+            return constant.list_device_types[self.microcontroller]
+        else:
+            return constant.list_device_types[self.sub_devices[self.selected_sub_device-1].microcontroller]
+
+    def get_selected_firmware_version(self):
+        if self.selected_sub_device == 0:
+            return str(self.firmware_version)
+        else:
+            return str(self.sub_devices[self.selected_sub_device-1].firmware_version)
 
     def init_from_header(self, header):
         self.device_name = header["device_name"]
         self.firmware_version = header["firmware_version"]
         self.microcontroller = header["device_type"]
-        self.sub_device_count = header["sub_device_count"]
         self.address = header["address"]
+        if self.address == 0:
+            self.sub_device_count = header["sub_device_count"]
 
         self.init_gpios()
+
+    def add_sub_device(self, sub_device):
+        self.sub_devices.append(sub_device)
 
     # GPIO count and labels based on microcontroller presets
     def init_gpios(self):
