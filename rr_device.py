@@ -33,6 +33,18 @@ class RR_Device():
         else:
             return str(self.sub_devices[self.selected_sub_device-1].firmware_version)
 
+    def get_selected_device_address(self):
+        if self.selected_sub_device == 0:
+            return str(self.address)
+        else:
+            return str(self.sub_devices[self.selected_sub_device-1].address)
+
+    def get_selected_device(self):
+        if self.selected_sub_device == 0:
+            return self
+        else:
+            return self.sub_devices[self.selected_sub_device-1]
+
     def init_from_header(self, header):
         self.device_name = header["device_name"]
         self.firmware_version = header["firmware_version"]

@@ -1,9 +1,13 @@
 from PyQt5 import QtWidgets, QtSerialPort
-from PyQt5.QtCore import QObject, QThread, QIODevice, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import Qt, QObject, QThread, QIODevice, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton
 import sys
 import gui_device, gui_serial_select, rr_device, ser
 import time, threading
+
+QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True) #enable highdpi scaling
+QtWidgets.QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True) #use highdpi icons
+
 
 
 class Worker(QObject):
@@ -22,8 +26,8 @@ class Worker(QObject):
 class Window(QWidget):
     def __init__(self):
         super().__init__()
-        self.setGeometry(2000, 200, 1024, 768)
-        self.setWindowTitle("this is the title")
+        self.setGeometry(100, 100, 1024, 768)
+        self.setWindowTitle("RealRobots Configurator")
 
         self.ser = ser.SerialConnection(self)
         
@@ -57,6 +61,12 @@ class Window(QWidget):
         self.ser.close()
         self.connect_page.show()
         self.connect_page.set_error_message(error)
+
+    def send_device_name_update(self, new_name):
+        self.ser.send_device_name_update(new_name)
+
+    def send_device_address_update(self, new_address):
+        self.ser.send_device_address_update(new_address)
 
     def commit_to_eeprom(self):
         self.ser.commit_to_eeprom()

@@ -72,7 +72,7 @@ class SerialConnection:
                 self.serial.write((chr(constant.HEADER_REQUEST_ID) + "\r\n").encode())
             
             elif text[0] == constant.HEADER_ID_RESPONSE:
-                print("GOT device name resonpose")
+                print("GOT device name response")
                 self.decode_id_packet(text)
 
                 #self.start_action(SerAction.CONNECTED)
@@ -105,7 +105,33 @@ class SerialConnection:
         ba.append(constant.HEADER_COMMIT_TO_EEPROM)        
         
         ba.append(ord('\r'))
-        ba.append(ord('\n'))  # 18 bytes
+        ba.append(ord('\n'))
+
+        b = bytes(ba)
+        self.serial.write(b)
+        self.start_action(SerAction.CONNECTED)
+
+    def send_device_name_update(self, new_name):        
+        if len(new_name) != 16:
+            print("ERROR: name not 16 characters")
+            return
+        ba = bytearray()
+        ba.append(constant.HEADER_UPDATE_DEVICE_NAME)        
+        for c in new_name:
+            ba.append(ord(c))
+        ba.append(ord('\r'))
+        ba.append(ord('\n')) 
+
+        b = bytes(ba)
+        self.serial.write(b)
+        self.start_action(SerAction.CONNECTED)
+
+    def send_device_address_update(self, new_address):   
+        ba = bytearray()
+        ba.append(constant.HEADER_UPDATE_DEVICE_ADDRESS) 
+        ba.append(new_address)
+        ba.append(ord('\r'))
+        ba.append(ord('\n')) 
 
         b = bytes(ba)
         self.serial.write(b)
@@ -140,6 +166,10 @@ class SerialConnection:
         #     print(data)
         #     self.win.reset("ERROR: Incorrect ID packet length: " + str(len(data)))
         #     return
+        cnt = 0
+        for d in data:
+            print(str(cnt) + ": " + str(d))
+            cnt+=1
 
         device = {}
         device["device_name"] = data[1: 1+16].decode()
@@ -151,12 +181,13 @@ class SerialConnection:
 
         current_byte = 21
         for i in range(0, device["sub_device_count"]):
+            current_byte = 21 + (19*i)
             sub_device = {}
             sub_device["device_name"] = data[current_byte: current_byte+16].decode()
             sub_device["firmware_version"] = data[current_byte+16]
             sub_device["device_type"] = data[current_byte+17]
             sub_device["address"] = data[current_byte+18]     
-            current_byte += 20
+            # current_byte += 20
             self.win.init_sub_device(sub_device)
 
         self.win.show_device_page()
@@ -173,19 +204,25 @@ class SerialConnection:
         if len(data) < len(self.win.current_device.gpios)*4 + 3:
             print("incorrect number of bytes: " + str(len(data)))
             
-            cnt = 0
-            for t in data:
-                print(str(cnt) + "\t" + str(t))
-                cnt += 1
+            # cnt = 0
+            # for t in data:
+            #     print(str(cnt) + "\t" + str(t))
+            #     cnt += 1
             return
 
-        for i in range(0, len(self.win.current_device.gpios)):
-            gpio = self.win.current_device.gpios[i]
+        # cnt = 0
+        # for t in data:
+        #     print(str(cnt) + "\t" + str(t))
+        #     cnt += 1
 
+        for i in range(0, len(self.win.current_device.gpios)):            
+            gpio = self.win.current_device.gpios[i]
+        
             gpio.raw_val = data[current_byte] << 8
             gpio.raw_val += data[current_byte+1]
             current_byte += 2            
 
+        
             gpio.calibrated_value = data[current_byte] << 8
             gpio.calibrated_value += data[current_byte+1]
             current_byte += 2
