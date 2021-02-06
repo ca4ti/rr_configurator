@@ -60,7 +60,7 @@ class SerialConnection:
             if text[0] == constant.HEADER_INPUT_VALUES:
                 self.decode_gpio_input_values(text)
             elif text[0] == constant.HEADER_RECEIVE_TEXT_MESSAGE:
-                print("Received text message from device")
+                #print("Received text message from device")
                 print(text[1:len(text)].decode())
                 # cnt = 0
                 # for t in text:
