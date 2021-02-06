@@ -2,11 +2,13 @@
 
 ## What is it?
 
-The configurator is an app that runs on a PC and communicates with the RealRobots Modular game controller firmware, allowing configuration of all analog and digital inputs as Joystick axis and buttons.
+The configurator is an app that runs on a PC and communicates with the RealRobots Modular [game controller firmware](https://gitlab.com/realrobots/rr_controller), allowing configuration of all analog and digital inputs as Joystick axis and buttons.
 
 ## How to use it?
 
 Connect your device to a USB port on your PC
+
+If you haven't already, upload the [rr_controller](https://gitlab.com/realrobots/rr_controller) firmware to it using the Arduino IDE
 
 Download the [current distribution](./rr_configurator.zip) and decompress.
 
@@ -22,15 +24,15 @@ You are now connected and can configure your device.
 
 ## Tips
 
-The device connected to the USB has to be assigned address 0. Only a device with address 0 will attempt to connect to other devices connected to it and send HID joystick inputs to the computer.
+The device that you intend to be the parent device that will connecd to the USB has to be assigned address 0. Only a device with address 0 will attempt to connect to other devices connected to it and send HID joystick inputs to the computer.
 
 Each device requires a unique address 0..255
 
-All changes are instantly applied to the device, but all will be lost when the device is power cycled unless "Commit to EEPROM" is used to commit the values to EEPROM.
+All changes are instantly applied to the device, but will revert when the device is power cycled unless "Commit to EEPROM" is used to commit the values to EEPROM. Committing to EEPROM only applies to the currently selected device.
 
-Pins D2 and D3 should not be assigned as they are used for communication between devices. If no child devices are connected they **should** be assignable and work normally, though this hasn't been tested.
+Pins D2 and D3 are special cases as they are used for communication between devices. If no child devices are connected they **should** be assignable and work normally, though this hasn't been tested.
 
-**Choose Device**: Will list connected devices if connected to device address 0 and other devices have unique addresses 1..255.
+**Choose Device**: Will list connected devices if you are connected to device address 0 using USB and other devices have unique addresses 1..255.
 
 Choose a device from this dropdown to configure it.
 
