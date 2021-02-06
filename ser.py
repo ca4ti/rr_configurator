@@ -61,34 +61,34 @@ class SerialConnection:
                 self.decode_gpio_input_values(text)
             elif text[0] == constant.HEADER_RECEIVE_TEXT_MESSAGE:
                 print("Received text message from device")
-                print(text.decode())
-                cnt = 0
-                for t in text:
-                    print(str(cnt) + "\t" + str(t))
-                    cnt += 1
+                print(text[1:len(text)].decode())
+                # cnt = 0
+                # for t in text:
+                #     print(str(cnt) + "\t" + str(t))
+                #     cnt += 1
             elif text[0] == constant.HEADER_HANDSHAKE_RESPONSE:
-                print("GOT A RESPONSE")
+                print("Received Handshake from Device")
                 self.start_action(SerAction.CONNECTED)
                 self.serial.write((chr(constant.HEADER_REQUEST_ID) + "\r\n").encode())
             
             elif text[0] == constant.HEADER_ID_RESPONSE:
-                print("GOT device name response")
+                print("Received Device ID Packet")
                 self.decode_id_packet(text)
 
                 #self.start_action(SerAction.CONNECTED)
 
             elif text[0] == constant.HEADER_REQUEST_GPIO_CONFIG_RESPONSE:
-                print("received config")
+                print("Received config")
                 print(len(text))
                 self.decode_gpio_config_packet(text)
 
             elif text[0] == constant.HEADER_SEND_GPIO_CONFIG_UPDATE_RESPONSE:
-                print("received config update confirmation")
+                print("Received config update confirmation")
                 print(len(text))
-                cnt = 0
-                for t in text:
-                    print(str(cnt) + "\t" + str(t))
-                    cnt += 1
+                # cnt = 0
+                # for t in text:
+                #     print(str(cnt) + "\t" + str(t))
+                #     cnt += 1
                 #self.decode_gpio_config_packet(text)
 
             #text = text.rstrip('\r\n')
@@ -166,10 +166,10 @@ class SerialConnection:
         #     print(data)
         #     self.win.reset("ERROR: Incorrect ID packet length: " + str(len(data)))
         #     return
-        cnt = 0
-        for d in data:
-            print(str(cnt) + ": " + str(d))
-            cnt+=1
+        # cnt = 0
+        # for d in data:
+        #     print(str(cnt) + ": " + str(d))
+        #     cnt+=1
 
         device = {}
         device["device_name"] = data[1: 1+16].decode()
@@ -202,7 +202,7 @@ class SerialConnection:
             return
 
         if len(data) < len(self.win.current_device.gpios)*4 + 3:
-            print("incorrect number of bytes: " + str(len(data)))
+            #print("incorrect number of bytes: " + str(len(data)))
             
             # cnt = 0
             # for t in data:
@@ -273,7 +273,7 @@ class SerialConnection:
 
 
     def send_gpio_config_update(self, gpio_index):
-        print("sedning... " + str(gpio_index))
+        print("Sending Config Update for gpio " + str(gpio_index))
         gpio = self.win.current_device.gpios[gpio_index]
         ba = bytearray()
         ba.append(constant.HEADER_SEND_GPIO_CONFIG_UPDATE)
@@ -297,8 +297,12 @@ class SerialConnection:
         ba.append(ord('\n'))  # 18 bytes
 
         # print("BA>LENGTH")
-        # print(ba.length())
-        b = bytes(ba)
+        bstring = ""
+        for b in ba:
+            bstring += str(b) + '\t'
+        print(bstring)
+        
+        b = bytes(ba)        
         self.serial.write(b)
         self.start_action(SerAction.CONNECTED)
 

@@ -56,7 +56,8 @@ class GUI_DevicePage():
         widget = QLineEdit(self.win)
         widget.setText(device.device_name)
         widget.setGeometry(self.offset[0] + 295, self.offset[1]-2, 100, 20)
-        widget.returnPressed.connect(partial(self.on_combo_change, -1, "input_device_name"))   
+        widget.textChanged.connect(partial(self.on_combo_change, -1, "input_device_name")) 
+        
         widget.show()
         device.widgets["input_device_name"] = widget
 
@@ -83,7 +84,7 @@ class GUI_DevicePage():
         widget.setValidator(QIntValidator())
         widget.setText(str(device.address))
         widget.setGeometry(self.offset[0] + 470, self.offset[1]-2, 40, 20)
-        widget.returnPressed.connect(partial(self.on_combo_change, -1, "input_device_address"))   
+        widget.textChanged.connect(partial(self.on_combo_change, -1, "input_device_address"))   
         widget.show()
         device.widgets["input_device_address"] = widget
 
@@ -202,7 +203,7 @@ class GUI_DevicePage():
             widget.setValidator(QIntValidator())
             xpos += 30
             widget.setGeometry(self.offset[0]+xpos, self.offset[1] + ypos + i*self.ygap, 40, 20)
-            widget.returnPressed.connect(partial(self.on_combo_change, i, "min"))   
+            widget.textChanged.connect(partial(self.on_combo_change, i, "min"))  
             widget.show()
             device.gpios[i].widgets["min"] = widget
 
@@ -211,7 +212,7 @@ class GUI_DevicePage():
             widget.setValidator(QIntValidator())
             xpos += 42
             widget.setGeometry(self.offset[0]+xpos, self.offset[1] + ypos + i*self.ygap, 40, 20)
-            widget.returnPressed.connect(partial(self.on_combo_change, i, "mid"))              
+            widget.textChanged.connect(partial(self.on_combo_change, i, "mid"))              
             widget.show()
             device.gpios[i].widgets["mid"] = widget
 
@@ -220,7 +221,7 @@ class GUI_DevicePage():
             widget.setValidator(QIntValidator())
             xpos += 42
             widget.setGeometry(self.offset[0]+xpos, self.offset[1] + ypos + i*self.ygap, 40, 20)
-            widget.returnPressed.connect(partial(self.on_combo_change, i, "max"))  
+            widget.textChanged.connect(partial(self.on_combo_change, i, "max"))  
             widget.show()
             device.gpios[i].widgets["max"] = widget
 
@@ -229,7 +230,7 @@ class GUI_DevicePage():
             widget.setValidator(QIntValidator())
             xpos += 50
             widget.setGeometry(self.offset[0]+xpos, self.offset[1] + ypos + i*self.ygap, 40, 20)
-            widget.returnPressed.connect(partial(self.on_combo_change, i, "dead_zone"))  
+            widget.textChanged.connect(partial(self.on_combo_change, i, "dead_zone"))  
             widget.show()
             device.gpios[i].widgets["dead_zone"] = widget
 
@@ -260,7 +261,7 @@ class GUI_DevicePage():
     def on_change_selected_device(self, sub_device_index):
         device = self.win.current_device
         self.win.current_device.selected_sub_device = sub_device_index
-        device.widgets["label_device_name"].setText("Selected Device:")
+        #device.widgets["label_device_name"].setText("Device Name:")
         device.widgets["input_device_name"].setText(device.get_selected_device_name())
         device.widgets["label_device_type"].setText("Microcontroller:\t" + device.get_selected_device_type())      
         device.widgets["label_firmware_version"].setText("Firmware Version:\t" + device.get_selected_firmware_version())
@@ -274,8 +275,10 @@ class GUI_DevicePage():
         if control == "combo_sub_device_picker":
             self.on_change_selected_device(self.win.current_device.widgets[control].currentIndex())            
             return
-        elif control == "input_device_name":
-            text = self.win.current_device.widgets[control].text()
+        elif control == "input_device_name":   
+            if not self.win.current_device.widgets[control].hasFocus():
+                return         
+            text = self.win.current_device.widgets[control].text()            
             if len(text) < 16:
                 diff = 16 - len(text)
                 for i in range(0, diff):
@@ -287,6 +290,8 @@ class GUI_DevicePage():
             self.win.send_device_name_update(text)
             return
         elif control == "input_device_address":
+            if not self.win.current_device.widgets[control].hasFocus():
+                return
             val = self.win.current_device.widgets[control].text() 
             val = int(val)
             if val < 0:
@@ -307,15 +312,23 @@ class GUI_DevicePage():
             #print(gpio.widgets[control].isChecked())
             gpio.is_inverted = gpio.widgets[control].isChecked()
         elif control == "min":
+            if not gpio.widgets[control].hasFocus():
+                return
             #print(gpio.widgets[control].text())
             gpio.min_val = int(gpio.widgets[control].text())
         elif control == "mid":
+            if not gpio.widgets[control].hasFocus():
+                return
             #print(gpio.widgets[control].text())
             gpio.mid_val = int(gpio.widgets[control].text())
         elif control == "max":
+            if not gpio.widgets[control].hasFocus():
+                return
             #print(gpio.widgets[control].text())
             gpio.max_val = int(gpio.widgets[control].text())
         elif control == "dead_zone":
+            if not gpio.widgets[control].hasFocus():
+                return
             #print(gpio.widgets[control].text())
             gpio.dead_zone = int(gpio.widgets[control].text())
         elif control == "assigned_input":
