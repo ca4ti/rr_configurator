@@ -30,6 +30,10 @@ All changes are instantly applied to the device, but all will be lost when the d
 
 Pins D2 and D3 should not be assigned as they are used for communication between devices. If no child devices are connected they **should** be assignable and work normally, though this hasn't been tested.
 
+**Choose Device**: Will list connected devices if connected to device address 0 and other devices have unique addresses 1..255.
+
+Choose a device from this dropdown to configure it.
+
 **PinMode**: "INPUT" sets a GPIO pin to receive inputs, "INPUT_PULLUP" does the same but also activates an internal pullup resistor. "OUTPUT" does nothing at the moment.
 
 **Mode**:  "DIGITAL" converts an input into a binary 0 or 1. "ANALOG" provides the voltage applied to the pin in a 0..1023 value representing 0..5v input.
