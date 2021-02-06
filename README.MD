@@ -40,15 +40,15 @@ Pins D2 and D3 should not be assigned as they are used for communication between
 
 **Mid**: The center value, should be assigned whatever the raw_value is at rest, related to "DeadZone". Only applies to analog inputs.
 
-Max: The maximum calibrated value, any value at or above this will be considered a 1023. Only applies to analog inputs.
+**Max**: The maximum calibrated value, any value at or above this will be considered a 1023. Only applies to analog inputs.
 
 **DeadZone**: A range around the Mid value, any input within this range will be reported at a 511 (halfway between 0 and 1023)
 
-Assignment: The button or axis assigned to this input and which will be reported via HID as a joystick input to the PC.
+**Assignment**: The button or axis assigned to this input and which will be reported via HID as a joystick input to the PC.
 
 **Raw Value**: The raw value being reported by the input pin.
 
-Calibrated Value: The value after calibration and which will be reported via HID as a joystick input to the PC.
+**Calibrated Value**: The value after calibration and which will be reported via HID as a joystick input to the PC.
 
 
 
