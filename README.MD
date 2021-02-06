@@ -12,11 +12,13 @@ Download the [current distribution](./rr_configurator.zip) and decompress.
 
 Run rr_configurator.exe
 
-![](E:\nextcloud\Projects\ModularGameControllers\CalibratorV3\choose_port.jpg)
+![](./choose_port.jpg)
 
 Select the correct port and press "Connect".
 
 You are now connected and can configure your device.
+
+![](./main_page.jpg)
 
 ## Tips
 
