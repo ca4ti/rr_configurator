@@ -62,10 +62,10 @@ class SerialConnection:
             elif text[0] == constant.HEADER_RECEIVE_TEXT_MESSAGE:
                 #print("Received text message from device")
                 print(text[1:len(text)].decode())
-                # cnt = 0
-                # for t in text:
-                #     print(str(cnt) + "\t" + str(t))
-                #     cnt += 1
+                cnt = 0
+                for t in text:
+                    print(str(cnt) + "\t" + str(t))
+                    cnt += 1
             elif text[0] == constant.HEADER_HANDSHAKE_RESPONSE:
                 print("Received Handshake from Device")
                 self.start_action(SerAction.CONNECTED)

@@ -54,7 +54,10 @@ pro_micro_pin_idx = [18, 19, 20, 21, 24, 25, 26, 27, 28, 2,  3,  5,
                      7, 14, 15, 16]
 
 list_assigned_input = ["NONE", "XAXIS", "YAXIS", "ZAXIS", "XROTATION", "YROTATION", "ZROTATION", "RUDDER", 
-                       "THROTTLE", "ACCELERATOR", "BRAKE", "STEERING"]
+                       "THROTTLE", "ACCELERATOR", "BRAKE", "STEERING",
+                       "HAT1_N", "HAT1_NE", "HAT1_E", "HAT1_SE", "HAT1_S", "HAT1_SW", "HAT1_W", "HAT1_NW",
+                       "HAT2_N", "HAT2_NE", "HAT2_E", "HAT2_SE", "HAT2_S", "HAT2_SW", "HAT2_W", "HAT2_NW"]
+
 # Add BUTTON1..128 to list_assigned_input
 for i in range(1, 129):
     list_assigned_input.append("BUTTON" + str(i))
