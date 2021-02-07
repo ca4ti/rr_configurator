@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtSerialPort
 from PyQt5.QtCore import Qt, QObject, QThread, QIODevice, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QMenuBar
 import sys
 import gui_device, gui_serial_select, rr_device, ser
 import time, threading
@@ -29,11 +29,12 @@ class Window(QWidget):
         self.setGeometry(100, 100, 760, 600)
         self.setWindowTitle("RealRobots Configurator")
 
+
         self.ser = ser.SerialConnection(self)
-        
 
         self.current_device = None # rr_device.RR_Device()
-
+        
+        
         self.device_page = gui_device.GUI_DevicePage(self)
         self.connect_page = gui_serial_select.GUI_SerialSelectPage(self)
 
@@ -101,6 +102,12 @@ class Window(QWidget):
 
     def request_device_config(self, sub_device_index):
         self.ser.request_device_config(sub_device_index)
+
+    def create_menu_bar(self):
+        self.menuBar = QMenuBar(self)
+        self.setMenuBar(self.menuBar)
+
+
 
     
 
