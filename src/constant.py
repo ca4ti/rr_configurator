@@ -54,12 +54,10 @@ pro_micro_pin_idx = [18, 19, 20, 21, 24, 25, 26, 27, 28, 2,  3,  5,
                      7, 14, 15, 16]
 
 list_assigned_input = ["NONE", "XAXIS", "YAXIS", "ZAXIS", "XROTATION", "YROTATION", "ZROTATION", "RUDDER", 
-                       "THROTTLE", "ACCELERATOR", "BRAKE", "STEERING", "BUTTON1", "BUTTON2", "BUTTON3", 
-                       "BUTTON4", "BUTTON5", "BUTTON6", "BUTTON7", "BUTTON8", "BUTTON9", "BUTTON10", 
-                       "BUTTON11", "BUTTON12", "BUTTON13", "BUTTON14", "BUTTON15", "BUTTON16",
-                       "BUTTON17", "BUTTON18", "BUTTON19", "BUTTON20", "BUTTON21", "BUTTON22",
-                       "BUTTON23", "BUTTON24", "BUTTON25", "BUTTON26", "BUTTON27", "BUTTON28",
-                       "BUTTON29", "BUTTON30", "BUTTON31", "BUTTON32"]
+                       "THROTTLE", "ACCELERATOR", "BRAKE", "STEERING"]
+# Add BUTTON1..128 to list_assigned_input
+for i in range(1, 129):
+    list_assigned_input.append("BUTTON" + str(i))
 
 
 def pin_label_to_idx(pin_label):
