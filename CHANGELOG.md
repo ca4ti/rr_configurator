@@ -1,4 +1,6 @@
-# v1.0.1 (08-02-2020)
+# v1.0.1 (09-02-2020) 
+
+- simultaneous release to firmware v3
 
 - increase possible inputs
     - max button inputs: 128 (up from 32)
