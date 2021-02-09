@@ -1,12 +1,9 @@
 ## List of upcoming changes 
 
 - increase possible inputs
-    - max button inputs: 128 (up from 32)
-    - hat inputs: 2 x 8 way hats
     - all eleven axes enabled
     - keyboard input
     - mouse input
-
 
 - confirmed rotary encoder support
 

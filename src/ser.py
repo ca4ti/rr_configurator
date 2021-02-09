@@ -55,7 +55,10 @@ class SerialConnection:
         while self.serial.canReadLine():
             text = self.serial.readLine().data()
             #print(text)
-            
+            # cnt = 0
+            # for t in text:
+            #     print(str(cnt) + "\t" + str(t))
+            #     cnt += 1
             
             if text[0] == constant.HEADER_INPUT_VALUES:
                 self.decode_gpio_input_values(text)

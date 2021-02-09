@@ -43,14 +43,14 @@ HEADER_UPDATE_DEVICE_ADDRESS = 91
 
 list_device_types = ["UNKNOWN", "ATmega328", "ATmega32U4", "ATmega2560"]
 
-list_input_modes = ["INPUT", "OUTPUT", "INPUT_PULLUP"]
+list_input_modes = ["INPUT", "OUTPUT", "INPUT_PULLUP"]#, "ENCODER0_A", "ENCODER0_B"]
 
 list_analog_modes = ["DIGITAL", "ANALOG"]
 
 pro_micro_pin_label = ["A0", "A1", "A2", "A3", "A6", "A7", "A8", "A9", "A10", "D2", "D3", "D5", 
                        "D7", "D14", "D15", "D16"]
 
-pro_micro_pin_idx = [18, 19, 20, 21, 24, 25, 26, 27, 28, 2,  3,  5,
+pro_micro_pin_idx = [18, 19, 20, 21, 4, 6, 8, 9, 10, 2,  3,  5,
                      7, 14, 15, 16]
 
 list_assigned_input = ["NONE", "XAXIS", "YAXIS", "ZAXIS", "XROTATION", "YROTATION", "ZROTATION", "RUDDER", 
