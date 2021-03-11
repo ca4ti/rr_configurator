@@ -57,7 +57,7 @@ Choose a device from this dropdown to configure it.
 **Calibrated Value**: The value after calibration and which will be reported via HID as a joystick input to the PC.
 
 
-##### Get full DIY kits, ready to assemble from RealRobots [here](http://128.199.98.192/store).
+##### Get full DIY kits, ready to assemble from RealRobots [here](https://www.realrobots.net).
 ![](./pic2_xs.jpg)
 
 
