@@ -10,8 +10,9 @@ class SerAction(Enum):
     WAITING_ON_HANDSHAKE = 1 
     CONNECTED = 2
     WAITING_ON_GPIO_CONFIG = 3
+    WAITING_ON_GPIO_UPDATE_CONFIRMATION = 4
 
-HANDSHAKE_TIMEOUT = 1
+HANDSHAKE_TIMEOUT = 0.5
 class SerialConnection:
     def __init__(self, interface):
         self.action = SerAction.DISCONNECTED
@@ -27,6 +28,7 @@ class SerialConnection:
         #print(self.serial)
 
     def try_connect(self, port):
+        self.port = port
         self.serial = QtSerialPort.QSerialPort(
             port,
             baudRate=115200,
@@ -36,16 +38,33 @@ class SerialConnection:
         
         self.serial.write((chr(constant.HEADER_HANDSHAKE) + "\r\n").encode())
         self.start_action(SerAction.WAITING_ON_HANDSHAKE)
+        self.handshake_tries = 0
         
     def start_action(self, action):
+        print("Action: " + str(action))
         self.action = action
         self.actionStartTime = time.time()
 
     def on_handshake_failed(self):
-        self.start_action(SerAction.DISCONNECTED)
-        print("connection failed")
-        self.serial.close()
-        self.win.reset("ERROR: Handshake failed (is it the correct port?)")
+
+        if self.handshake_tries > 3:
+            self.start_action(SerAction.DISCONNECTED)
+            print("connection failed")
+            self.serial.close()
+            self.win.reset("ERROR: Handshake failed (is it the correct port?)")
+        else:
+            self.handshake_tries += 1
+            self.serial.close()
+
+            self.serial = QtSerialPort.QSerialPort(
+                self.port,
+                baudRate=115200,
+                readyRead=self.receive
+            )
+            self.serial.open(QIODevice.ReadWrite)
+            self.serial.write((chr(constant.HEADER_HANDSHAKE) + "\r\n").encode())
+            self.start_action(SerAction.WAITING_ON_HANDSHAKE)
+            
 
     def close(self):
         self.serial.close()
@@ -72,6 +91,7 @@ class SerialConnection:
             elif text[0] == constant.HEADER_HANDSHAKE_RESPONSE:
                 print("Received Handshake from Device")
                 self.start_action(SerAction.CONNECTED)
+                print(text)
                 self.serial.write((chr(constant.HEADER_REQUEST_ID) + "\r\n").encode())
             
             elif text[0] == constant.HEADER_ID_RESPONSE:
@@ -84,24 +104,41 @@ class SerialConnection:
                 print("Received config")
                 print(len(text))
                 self.decode_gpio_config_packet(text)
+                self.start_action(SerAction.CONNECTED)
 
             elif text[0] == constant.HEADER_SEND_GPIO_CONFIG_UPDATE_RESPONSE:
-                print("Received config update confirmation")
+                print("Received config update confirmation")                
                 print(len(text))
-                # cnt = 0
-                # for t in text:
-                #     print(str(cnt) + "\t" + str(t))
-                #     cnt += 1
+                cnt = 0
+                for t in text:
+                    print(str(cnt) + "\t" + str(t))
+                    cnt += 1
                 #self.decode_gpio_config_packet(text)
+                self.start_action(SerAction.CONNECTED)
 
+            else:
+                print("unknown packet")
+                print(text)
+                cnt = 0
+                for t in text:
+                    print(str(cnt) + "\t" + str(t))
+                    cnt += 1
             #text = text.rstrip('\r\n')
             
 
 
     def update(self):
+        #print(str(time.time() - self.actionStartTime))
         if self.action == SerAction.WAITING_ON_HANDSHAKE:
             if time.time() - self.actionStartTime > HANDSHAKE_TIMEOUT:
+                print("handshake timeout")
                 self.on_handshake_failed()
+
+        elif self.action == SerAction.WAITING_ON_GPIO_UPDATE_CONFIRMATION:
+            
+            if time.time() - self.actionStartTime > 0.2:
+                print("config update failed")
+                self.try_resend_config_update_packet()
 
     def commit_to_eeprom(self):        
         ba = bytearray()
@@ -164,6 +201,7 @@ class SerialConnection:
 
 
     def decode_id_packet(self, data):
+        
         # if len(data) != constant.ID_PACKET_LENGTH:
         #     print("ERROR: Incorrect ID packet length " + str(len(data)))
         #     print(data)
@@ -189,7 +227,8 @@ class SerialConnection:
             sub_device["device_name"] = data[current_byte: current_byte+16].decode()
             sub_device["firmware_version"] = data[current_byte+16]
             sub_device["device_type"] = data[current_byte+17]
-            sub_device["address"] = data[current_byte+18]     
+            sub_device["address"] = data[current_byte+18]    
+            
             # current_byte += 20
             self.win.init_sub_device(sub_device)
 
@@ -237,6 +276,9 @@ class SerialConnection:
             print("ERROR: Incorrect GPIO Config packet length " + str(len(data)))
             self.win.reset("ERROR: Incorrect GPIO Config packet length: " + str(len(data)))
             return
+
+        # print("HERE IS THE DATA>>>")
+        # print(data)
 
         current_byte = 1 #skip header byte
         input_count = data[current_byte]
@@ -305,10 +347,14 @@ class SerialConnection:
             bstring += str(b) + '\t'
         print(bstring)
         
-        b = bytes(ba)        
+        b = bytes(ba)     
+        self.config_update_packet = b   
         self.serial.write(b)
-        self.start_action(SerAction.CONNECTED)
+        self.start_action(SerAction.WAITING_ON_GPIO_UPDATE_CONFIRMATION)
 
+    def try_resend_config_update_packet(self):
+        self.serial.write(self.config_update_packet)
+        self.start_action(SerAction.WAITING_ON_GPIO_UPDATE_CONFIRMATION)
 
 def to_string(packet_bytes):
     count = 0

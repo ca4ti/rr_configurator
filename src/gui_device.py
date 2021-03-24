@@ -368,6 +368,8 @@ class GUI_DevicePage():
 
     def hide(self):
         # print(self.win.current_device.widgets)
+        if self.win.current_device == None:
+            return
         for key, value in self.win.current_device.widgets.items():
             value.hide()
 

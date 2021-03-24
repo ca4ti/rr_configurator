@@ -1,6 +1,7 @@
-INPUT = 0
-OUTPUT = 1
-INPUT_PULLUP = 2
+INPUT = 0               # 1  ESP32 Values
+OUTPUT = 1              # 2
+INPUT_PULLUP = 2        # 5
+UNKNOWN = 3
 
 NOAXIS = 0
 XAXIS = 1
@@ -41,9 +42,9 @@ HEADER_UPDATE_DEVICE_NAME = 89
 HEADER_UPDATE_DEVICE_ADDRESS = 91
 
 
-list_device_types = ["UNKNOWN", "ATmega328", "ATmega32U4", "ATmega2560"]
+list_device_types = ["UNKNOWN", "ATmega328", "ATmega32U4", "ATmega2560", "ESP32"]
 
-list_input_modes = ["INPUT", "OUTPUT", "INPUT_PULLUP"]#, "ENCODER0_A", "ENCODER0_B"]
+list_input_modes = ["INPUT", "OUTPUT", "INPUT_PULLUP", "UNKNOWN"]#, "ENCODER0_A", "ENCODER0_B"]
 
 list_analog_modes = ["DIGITAL", "ANALOG"]
 
@@ -52,6 +53,9 @@ pro_micro_pin_label = ["A0", "A1", "A2", "A3", "A6", "A7", "A8", "A9", "A10", "D
 
 pro_micro_pin_idx = [18, 19, 20, 21, 4, 6, 8, 9, 10, 2,  3,  5,
                      7, 14, 15, 16]
+
+esp32_pin_label = ["4", "5", "13", "14", "15", "16", "17", "18", "19", "23", "25", "26", "27", "32", "33", "34"]
+esp32_pin_idx = [4, 5, 13, 14, 15, 16, 17, 18, 19, 23, 25, 26, 27, 32, 33, 34]
 
 list_assigned_input = ["NONE", "XAXIS", "YAXIS", "ZAXIS", "XROTATION", "YROTATION", "ZROTATION", "RUDDER", 
                        "THROTTLE", "ACCELERATOR", "BRAKE", "STEERING",

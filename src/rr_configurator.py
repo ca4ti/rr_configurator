@@ -17,9 +17,11 @@ class Worker(QObject):
 
     @pyqtSlot()
     def procCounter(self): # A slot takes no params
-        for i in range(1, 100):
+        count = 0
+        while True:
             time.sleep(0.1)
-            self.update.emit(i)
+            self.update.emit(count)
+            count+=1
 
         self.finished.emit()
 
