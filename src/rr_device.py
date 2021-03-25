@@ -62,7 +62,7 @@ class RR_Device():
     def init_gpios(self):
         for i in range(0, len(constant.pro_micro_pin_idx)):
             gpio = RR_GPIO(self.address, i)
-            print("MICROCONTROLLER: " + str(self.microcontroller))
+            #print("MICROCONTROLLER: " + str(self.microcontroller))
             if (self.microcontroller == 4):
                 gpio.pin_number = constant.esp32_pin_idx[i]
                 gpio.pin_label = None  #constant.esp32_pin_label[i]

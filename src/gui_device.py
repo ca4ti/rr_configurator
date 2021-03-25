@@ -361,6 +361,7 @@ class GUI_DevicePage():
             
             gpio.widgets["raw_val"].setText(str(gpio.raw_val))
             gpio.widgets["calibrated_val"].setText(str(gpio.calibrated_value))
+            gpio.widgets["calibrated_val"].adjustSize()
 
     def show(self):
         print("showing device page")

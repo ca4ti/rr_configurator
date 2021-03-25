@@ -267,6 +267,8 @@ class SerialConnection:
         
             gpio.calibrated_value = data[current_byte] << 8
             gpio.calibrated_value += data[current_byte+1]
+            if gpio.calibrated_value > 32767:
+                gpio.calibrated_value = gpio.calibrated_value - 32767*2
             current_byte += 2
 
         self.win.device_page.update_gpio_controls_values()

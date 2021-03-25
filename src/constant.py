@@ -57,10 +57,12 @@ pro_micro_pin_idx = [18, 19, 20, 21, 4, 6, 8, 9, 10, 2,  3,  5,
 esp32_pin_label = ["4", "5", "13", "14", "15", "16", "17", "18", "19", "23", "25", "26", "27", "32", "33", "34"]
 esp32_pin_idx = [4, 5, 13, 14, 15, 16, 17, 18, 19, 23, 25, 26, 27, 32, 33, 34]
 
-list_assigned_input = ["NONE", "XAXIS", "YAXIS", "ZAXIS", "XROTATION", "YROTATION", "ZROTATION", "RUDDER", 
-                       "THROTTLE", "ACCELERATOR", "BRAKE", "STEERING",
+list_assigned_input = ["NONE", "XAXIS", "YAXIS", "ZAXIS", "XROTATION", "YROTATION", "ZROTATION", "SLIDER0", 
+                       "SLIDER1", "!RESERVED!", "!RESERVED!", "!RESERVED!",
                        "HAT1_N", "HAT1_NE", "HAT1_E", "HAT1_SE", "HAT1_S", "HAT1_SW", "HAT1_W", "HAT1_NW",
-                       "HAT2_N", "HAT2_NE", "HAT2_E", "HAT2_SE", "HAT2_S", "HAT2_SW", "HAT2_W", "HAT2_NW"]
+                       "HAT2_N", "HAT2_NE", "HAT2_E", "HAT2_SE", "HAT2_S", "HAT2_SW", "HAT2_W", "HAT2_NW",
+                       "HAT3_N", "HAT3_NE", "HAT3_E", "HAT3_SE", "HAT3_S", "HAT3_SW", "HAT3_W", "HAT3_NW",
+                       "HAT4_N", "HAT4_NE", "HAT4_E", "HAT4_SE", "HAT4_S", "HAT4_SW", "HAT4_W", "HAT4_NW"]
 
 # Add BUTTON1..128 to list_assigned_input
 for i in range(1, 129):
