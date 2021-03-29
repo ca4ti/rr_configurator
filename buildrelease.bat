@@ -1,0 +1,1 @@
+pyinstaller ./src/rr_configurator.py --onefile --noconfirm

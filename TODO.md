@@ -1,5 +1,7 @@
 ## List of upcoming changes 
 
+- Implement bluetooth HID code to USBHID and discontinue use of Joystick.h for own code
+
 - increase possible inputs
     - all eleven axes enabled
     - keyboard input
@@ -20,7 +22,7 @@
     - flashy leds
     - WS2812b compatibility 
     - buzzer (mostly want tactile response on throttle positions)
-- ESP32 compatibility and bluetooth HID
+
 
 
 ## Wish List 

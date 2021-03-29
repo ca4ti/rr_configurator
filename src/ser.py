@@ -67,6 +67,7 @@ class SerialConnection:
             
 
     def close(self):
+        self.start_action(SerAction.DISCONNECTED)
         self.serial.close()
 
     def receive(self):
@@ -276,6 +277,8 @@ class SerialConnection:
     def decode_gpio_config_packet(self, data):
         if len(data) != len(self.win.current_device.gpios) * constant.GPIO_CONFIG_LENGTH + 4:
             print("ERROR: Incorrect GPIO Config packet length " + str(len(data)))
+            print("Should be: " + str(len(self.win.current_device.gpios) * constant.GPIO_CONFIG_LENGTH + 4))
+            print(data)
             self.win.reset("ERROR: Incorrect GPIO Config packet length: " + str(len(data)))
             return
 
