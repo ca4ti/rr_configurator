@@ -28,9 +28,11 @@ The device that you intend to be the parent device that will connecd to the USB 
 
 Each device requires a unique address 0..255
 
+For bluetooth connectivity device 0 MUST be an ESP32. ESP32s do not currently work as subdevices.
+
 All changes are instantly applied to the device, but will revert when the device is power cycled unless "Commit to EEPROM" is used to commit the values to EEPROM. Committing to EEPROM only applies to the currently selected device.
 
-Pins D2 and D3 are special cases as they are used for communication between devices. If no child devices are connected they **should** be assignable and work normally, though this hasn't been tested.
+Pins D2 and D3 (ATMEGA32U4) are special cases as they are used for communication between devices. If no child devices are connected they **should** be assignable and work normally, though this hasn't been tested.
 
 **Choose Device**: Will list connected devices if you are connected to device address 0 using USB and other devices have unique addresses 1..255.
 
@@ -58,6 +60,7 @@ Choose a device from this dropdown to configure it.
 
 
 ##### Get full DIY kits, ready to assemble from RealRobots [here](https://www.realrobots.net).
+
+##### Support RealRobots on [Patreon](https://www.patreon.com/realrobots).
+
 ![](./pic2_xs.jpg)
-
-
