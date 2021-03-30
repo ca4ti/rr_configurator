@@ -12,7 +12,7 @@ class RR_Device():
 
         # 0 == this device, subdevices are index+1
         self.selected_sub_device = 0
-
+        
         self.widgets = {}
 
     def get_selected_device_name(self):

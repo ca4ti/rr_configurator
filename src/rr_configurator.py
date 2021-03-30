@@ -28,7 +28,7 @@ class Worker(QObject):
 class Window(QWidget):
     def __init__(self):
         super().__init__()
-        self.setGeometry(100, 100, 760, 600)
+        self.setGeometry(100, 100, 860, 600)
         self.setWindowTitle("RealRobots Configurator")
 
 
