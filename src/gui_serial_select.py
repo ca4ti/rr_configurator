@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QPushButton, QLabel, QComboBox
+from PyQt5.QtWidgets import QPushButton, QLabel, QComboBox, QGridLayout, QWidget
 import ser
 
 class GUI_SerialSelectPage():
@@ -9,36 +9,34 @@ class GUI_SerialSelectPage():
         self.offset = [10, 10]
         self.ygap = 30
         
+        self.w = QWidget(self.win)
+        self.layout = QGridLayout(self.w)
 
-        widget = QLabel(self.win)
+        widget = QLabel()
         widget.setText("Choose Serial Port:")
-        widget.move(self.offset[0]+2, self.offset[1])
-        widget.hide()
+        self.layout.addWidget(widget, 0, 0)
         self.controls["desc"] = widget
 
-        widget = QComboBox(self.win)
-        widget.move(self.offset[0]+1, self.offset[1]+20)
-        widget.hide()
+        widget = QComboBox()
+        self.layout.addWidget(widget, 1, 0)
         self.controls["choose_port"] = widget
 
-        widget = QPushButton("Refresh", self.win)
-        widget.move(self.offset[0]+80, self.offset[1]+20)
+        widget = QPushButton("Refresh")
+        self.layout.addWidget(widget, 1, 1)
         widget.clicked.connect(self.refresh_com_ports)
-        widget.hide()
         self.controls["refresh"] = widget
 
-        widget = QPushButton("Connect", self.win)
-        widget.move(self.offset[0]+0, self.offset[1]+45)
+        widget = QPushButton("Connect")
+        self.layout.addWidget(widget, 2, 0, 1, 1)
         widget.clicked.connect(self.connect)
-        widget.hide()
         self.controls["connect_to_port"] = widget
 
-        widget = QLabel(self.win)
+        widget = QLabel()
         widget.setText("Try Again")
-        widget.move(self.offset[0]+82, self.offset[1]+50)        
+        self.layout.addWidget(widget, 2, 3, 1, 1)     
         self.controls["warning"] = widget
-        widget.hide()
-        
+
+        self.w.show()
 
     def refresh_com_ports(self):
         print("refresh com ports")

@@ -61,7 +61,16 @@ class Window(QWidget):
             for x in range(0, 9):
                 formLayout.addWidget(widgets[x], r, x, 1, 1)
 
-              
+          device.widgets[""]
+          device.widgets[""]  
+          
+          device.widgets[""] 
+          device.widgets[""]
+          device.widgets[""]
+          device.widgets[""]
+          device.widgets[""]
+          device.widgets[""]
+          device.widgets[""]
        
         groupBox.setLayout(formLayout)
         scroll = QScrollArea()

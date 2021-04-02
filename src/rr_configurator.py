@@ -16,29 +16,27 @@ class Worker(QObject):
 
 
     @pyqtSlot()
-    def procCounter(self): # A slot takes no params
+    def procCounter(self):
         count = 0
         while True:
             time.sleep(0.1)
             self.update.emit(count)
-            count+=1
+            count += 1
 
         self.finished.emit()
 
 class Window(QWidget):
     def __init__(self):
         super().__init__()
-        self.setGeometry(100, 100, 860, 600)
+        self.setGeometry(100, 100, 860, 100)
         self.setWindowTitle("RealRobots Configurator")
-
 
         self.ser = ser.SerialConnection(self)
 
-        self.current_device = None # rr_device.RR_Device()
-        
-        
-        self.device_page = gui_device.GUI_DevicePage(self)
+        self.current_device = None # rr_device.RR_Device()        
         self.connect_page = gui_serial_select.GUI_SerialSelectPage(self)
+        self.device_page = gui_device.GUI_DevicePage(self)
+        
 
         self.connect_page.show()
         # threading.Timer(1, self.main_loop).start()
@@ -114,6 +112,9 @@ class Window(QWidget):
     
 
 app = QApplication(sys.argv)
+app.setStyle('Breeze')
+app.setStyleSheet("QGroupBox {border: none;}")
+app.setStyleSheet("QScrollArea {border: none;}")
 window = Window()
 window.show()
 sys.exit(app.exec_())
