@@ -19,6 +19,10 @@ class SerialConnection:
         self.actionStartTime = 0
         self.win = interface
 
+        self.char_buffer = QByteArray()
+        self.eol = QByteArray()
+        self.eol.append("\r\n")
+
         self.serial = QtSerialPort.QSerialPort(
             '??',
             baudRate=115200,
@@ -72,8 +76,17 @@ class SerialConnection:
 
     def receive(self):
         #print("received")
-        while self.serial.canReadLine():
-            text = self.serial.readLine().data()
+        self.char_buffer += self.serial.readAll()
+
+        if self.char_buffer.contains(self.eol):
+            idx = self.char_buffer.indexOf(self.eol)
+            msg = self.char_buffer[0: idx+2]
+            #print(msg)
+            #print(self.char_buffer)
+            self.char_buffer = self.char_buffer[idx+2: len(self.char_buffer)]
+            #print(self.char_buffer)
+
+            text = msg.data()# self.serial.readLine().data()
             #print(text)
             # cnt = 0
             # for t in text:
@@ -279,6 +292,10 @@ class SerialConnection:
             print("ERROR: Incorrect GPIO Config packet length " + str(len(data)))
             print("Should be: " + str(len(self.win.current_device.gpios) * constant.GPIO_CONFIG_LENGTH + 4))
             print(data)
+            count = 0
+            for d in data:
+                print(str(count) + "\t" + str(d))
+                count += 1
             self.win.reset("ERROR: Incorrect GPIO Config packet length: " + str(len(data)))
             return
 

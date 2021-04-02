@@ -329,6 +329,8 @@ class GUI_DevicePage():
             device.gpios[i].widgets["calibrated_val"] = widget
             widgets.append(widget)
 
+
+
             
             c = 0
             for w in widgets:  
@@ -399,6 +401,13 @@ class GUI_DevicePage():
         elif control == "pin_mode":
             #print(gpio.widgets[control].currentIndex())
             gpio.pin_mode = gpio.widgets[control].currentIndex()
+
+            if gpio.pin_mode == constant.OUTPUT:
+                self.switch_gpio_to_OUTPUT_mode(gpio_index)
+            else:
+                self.switch_gpio_to_INPUT_mode(gpio_index)
+                
+
         elif control == "input_type":
             #print(gpio.widgets[control].currentIndex())
             gpio.is_analog = gpio.widgets[control].currentIndex()
@@ -440,12 +449,53 @@ class GUI_DevicePage():
         if self.is_ready:
             self.win.send_gpio_config_update(gpio_index)
     
+    def switch_gpio_to_OUTPUT_mode(self, gpio_index):
+        gpio = self.win.current_device.gpios[gpio_index]
+
+        
+        gpio.widgets["input_type"].clear()
+        gpio.widgets["input_type"].addItem("Always Off")
+        gpio.widgets["input_type"].addItem("Always On")
+        gpio.widgets["input_type"].addItem("Flashing")
+        gpio.widgets["input_type"].addItem("Pulsing")
+        gpio.widgets["input_type"].show()
+
+        gpio.widgets["is_inverted"].hide()
+        gpio.widgets["min"].hide()
+        gpio.widgets["mid"].hide()
+        gpio.widgets["max"].hide()
+        gpio.widgets["dead_zone"].hide()
+        gpio.widgets["assigned_input"].hide()
+        gpio.widgets["raw_val"].hide()
+
+    def switch_gpio_to_INPUT_mode(self, gpio_index):
+        gpio = self.win.current_device.gpios[gpio_index]
+        
+        gpio.widgets["input_type"].clear()
+        for m in range(0, len(constant.list_analog_modes)):
+            gpio.widgets["input_type"].addItem(constant.list_analog_modes[m])
+        gpio.widgets["input_type"].show()
+
+        gpio.widgets["is_inverted"].show()
+        gpio.widgets["min"].show()
+        gpio.widgets["mid"].show()
+        gpio.widgets["max"].show()
+        gpio.widgets["dead_zone"].show()
+        gpio.widgets["assigned_input"].show()
+        gpio.widgets["raw_val"].show()
+    
     def update_gpio_controls(self):
         device = self.win.current_device
         for i in range(0, len(self.win.current_device.gpios)):  
             gpio = device.gpios[i]
             
             gpio.widgets["pin_mode"].setCurrentIndex(gpio.pin_mode)
+
+            if gpio.pin_mode == constant.OUTPUT:
+                self.switch_gpio_to_OUTPUT_mode(i)
+            else:
+                self.switch_gpio_to_INPUT_mode(i)
+
             gpio.widgets["input_type"].setCurrentIndex(gpio.is_analog)
             gpio.widgets["is_inverted"].setChecked(gpio.is_inverted)
             gpio.widgets["min"].setText(str(gpio.min_val))

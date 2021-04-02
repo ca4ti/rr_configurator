@@ -44,7 +44,7 @@ HEADER_UPDATE_DEVICE_ADDRESS = 91
 
 list_device_types = ["UNKNOWN", "ATmega328", "ATmega32U4", "ATmega2560", "ESP32"]
 
-list_input_modes = ["INPUT", "OUTPUT", "INPUT_PULLUP", "UNKNOWN"]#, "ENCODER0_A", "ENCODER0_B"]
+list_input_modes = ["INPUT", "OUTPUT", "INPUT_PULLUP"]#, "ENCODER0_A", "ENCODER0_B"]
 
 list_analog_modes = ["DIGITAL", "ANALOG"]
 
