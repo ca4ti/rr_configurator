@@ -1,6 +1,8 @@
 # v1.0.3 (02-04-2021)
 - GUI now scrolls to accomodate more GPIOs and hopefully larger fonts
 
+- Empty input boxes now revert to '0' rather than crashing the software
+
 # v1.0.2 (29-03-2021)
 
 - ESP32 compatibility implemented

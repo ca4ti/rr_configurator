@@ -383,6 +383,10 @@ class GUI_DevicePage():
             if not self.win.current_device.widgets[control].hasFocus():
                 return
             val = self.win.current_device.widgets[control].text() 
+            if val == "":
+                self.win.current_device.widgets[control].setText("0")
+                val = "0"
+
             val = int(val)
             if val < 0:
                 val = 0
@@ -405,21 +409,29 @@ class GUI_DevicePage():
             if not gpio.widgets[control].hasFocus():
                 return
             #print(gpio.widgets[control].text())
+            if gpio.widgets[control].text() == "":
+                gpio.widgets[control].setText("0")
             gpio.min_val = int(gpio.widgets[control].text())
         elif control == "mid":
             if not gpio.widgets[control].hasFocus():
                 return
             #print(gpio.widgets[control].text())
+            if gpio.widgets[control].text() == "":
+                gpio.widgets[control].setText("0")
             gpio.mid_val = int(gpio.widgets[control].text())
         elif control == "max":
             if not gpio.widgets[control].hasFocus():
                 return
             #print(gpio.widgets[control].text())
+            if gpio.widgets[control].text() == "":
+                gpio.widgets[control].setText("0")
             gpio.max_val = int(gpio.widgets[control].text())
         elif control == "dead_zone":
             if not gpio.widgets[control].hasFocus():
                 return
             #print(gpio.widgets[control].text())
+            if gpio.widgets[control].text() == "":
+                gpio.widgets[control].setText("0")
             gpio.dead_zone = int(gpio.widgets[control].text())
         elif control == "assigned_input":
             #print(gpio.widgets[control].currentIndex())
