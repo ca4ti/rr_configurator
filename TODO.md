@@ -1,5 +1,7 @@
 ## List of upcoming changes 
 
+- Support for i2c/spi modules like MPU6050 and ADXL345
+
 - Implement bluetooth HID code to USBHID and discontinue use of Joystick.h for own code
 
 - increase possible inputs
