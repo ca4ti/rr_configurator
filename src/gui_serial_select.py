@@ -33,7 +33,7 @@ class GUI_SerialSelectPage():
 
         widget = QLabel()
         widget.setText("Try Again")
-        self.layout.addWidget(widget, 2, 3, 1, 1)     
+        self.layout.addWidget(widget, 2, 1, 1, 1)     
         self.controls["warning"] = widget
 
         self.w.show()

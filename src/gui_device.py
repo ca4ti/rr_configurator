@@ -1,10 +1,12 @@
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QPushButton, QLabel, QComboBox, QCheckBox, QLineEdit, QGridLayout, QScrollArea, QFormLayout, QGroupBox, QVBoxLayout
+from PyQt5.QtWidgets import QPushButton, QLabel, QMenuBar, QComboBox, QCheckBox, QLineEdit, QGridLayout, QScrollArea, QFormLayout, QGroupBox, QVBoxLayout
 from PyQt5.QtGui import QIntValidator
 from functools import partial
-import constant
+import constant, gui_button_matrix
 
+MODE_NORMAL = 0
+MODE_MATRIX = 1
 
 class GUI_DevicePage():
     def __init__(self, win):
@@ -20,6 +22,8 @@ class GUI_DevicePage():
         self.topButtonsGridLayout = QGridLayout()
         self.gpioScrollArea = QScrollArea()
 
+        self.mode = MODE_NORMAL
+
     def init_device_controls(self):
         device = self.win.current_device
         xpos = 0
@@ -28,7 +32,6 @@ class GUI_DevicePage():
         self.groupBox.show()
         self.gpioScrollArea.show()
 
-        device_widgets = []
 
         widget = QPushButton(self.win)
         widget.setText("Disconnect")
@@ -43,6 +46,13 @@ class GUI_DevicePage():
         widget.show()
         widget.clicked.connect(lambda: self.win.commit_to_eeprom())
         device.widgets["btn_commit_to_eeprom"] = widget  
+
+        widget = QPushButton(self.win)
+        widget.setText("Button Matrix")
+        #widget.move(self.offset[0] + 620, self.offset[1]+25)
+        widget.show()
+        widget.clicked.connect(lambda: self.toggle_button_matrix_view())
+        device.widgets["btn_button_matrix"] = widget  
 
         # Device Details
         widget = QLabel(self.win)
@@ -123,6 +133,9 @@ class GUI_DevicePage():
 
         self.topButtonsGridLayout.addWidget(device.widgets["btn_disconnect"], 0, 5, 1, 1)
         self.topButtonsGridLayout.addWidget(device.widgets["btn_commit_to_eeprom"], 1, 5, 1, 1)
+
+        self.topButtonsGridLayout.addWidget(device.widgets["btn_button_matrix"], 2, 3, 1, 1)
+
 
         self.layout.addLayout(self.topButtonsGridLayout)
 
@@ -345,10 +358,17 @@ class GUI_DevicePage():
         self.gpioScrollArea.setWidget(self.groupBox)
         self.gpioScrollArea.setWidgetResizable(True)
         self.gpioScrollArea.setFixedHeight(444)
+        
+        self.gpioScrollArea.setFixedWidth(900)
 
         self.layout.addLayout(self.topButtonsGridLayout)
         self.layout.addWidget(self.gpioScrollArea)
-        
+        #self.gpioScrollArea.hide()
+
+        self.matrix = gui_button_matrix.GUI_ButtonMatrixPage(self.win)
+        self.matrix.init_matrix_gui()
+        self.layout.addWidget(self.matrix.frame)
+        self.matrix.hide()
 
     def on_change_selected_device(self, sub_device_index):
         device = self.win.current_device
@@ -515,6 +535,27 @@ class GUI_DevicePage():
             # gpio.widgets["raw_val"].adjustSize()
             gpio.widgets["calibrated_val"].setText(str(gpio.calibrated_value))
             # gpio.widgets["calibrated_val"].adjustSize()
+
+    def toggle_button_matrix_view(self):
+        if self.mode == MODE_NORMAL:
+            self.gpioScrollArea.hide()
+            self.matrix.show()
+            self.mode = MODE_MATRIX
+            self.matrix.UpdateMatrixGUIValues()
+            self.win.current_device.widgets["btn_button_matrix"].setText("BACK")
+            #self.matrix.init_matrix_gui()
+        elif self.mode == MODE_MATRIX:            
+            self.matrix.hide()
+            self.gpioScrollArea.show()
+            self.mode = MODE_NORMAL
+            self.win.current_device.widgets["btn_button_matrix"].setText("Button Matrix")
+            
+
+        # self.matrix = gui_button_matrix.GUI_ButtonMatrixPage(self.win)
+        # self.matrix.init_matrix_gui()
+        # self.layout.addLayout(self.matrix.grid)
+        
+        pass
 
     def show(self):
         print("showing device page")

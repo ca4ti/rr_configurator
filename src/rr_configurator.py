@@ -9,7 +9,6 @@ QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True) #enable hi
 QtWidgets.QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True) #use highdpi icons
 
 
-
 class Worker(QObject):
     finished = pyqtSignal()
     update = pyqtSignal(int)
@@ -36,6 +35,8 @@ class Window(QWidget):
         self.current_device = None # rr_device.RR_Device()        
         self.connect_page = gui_serial_select.GUI_SerialSelectPage(self)
         self.device_page = gui_device.GUI_DevicePage(self)
+
+        
         
 
         self.connect_page.show()
@@ -103,9 +104,6 @@ class Window(QWidget):
     def request_device_config(self, sub_device_index):
         self.ser.request_device_config(sub_device_index)
 
-    def create_menu_bar(self):
-        self.menuBar = QMenuBar(self)
-        self.setMenuBar(self.menuBar)
 
 
 
@@ -113,8 +111,9 @@ class Window(QWidget):
 
 app = QApplication(sys.argv)
 app.setStyle('Breeze')
-app.setStyleSheet("QGroupBox {border: none;}")
-app.setStyleSheet("QScrollArea {border: none;}")
+app.setStyleSheet("QGroupBox {border: none;border-width : 0px}")
+app.setStyleSheet("QScrollArea {border: none;border-width : 0px}")
+app.setStyleSheet("QScrollBar:vertical  {width: 10px;}")
 window = Window()
 window.show()
 sys.exit(app.exec_())

@@ -10,10 +10,21 @@ class RR_Device():
         self.gpios = []
         self.sub_devices = []
 
+        self.matrix_row_pins = []
+        self.matrix_col_pins = []
+        for i in range(0, 16):
+            self.matrix_col_pins.append(254)
+            self.matrix_row_pins.append(254)
+        self.matrix_assignments = [[0]*16]*16
+        for row in range(0, 16):
+            for col in range(0, 16):
+                self.matrix_assignments[col][row] = 0
+        
+
         # 0 == this device, subdevices are index+1
         self.selected_sub_device = 0
-        
-        self.widgets = {}
+                
+        self.widgets = {}        
 
     def get_selected_device_name(self):
         if self.selected_sub_device == 0:
@@ -44,6 +55,15 @@ class RR_Device():
             return self
         else:
             return self.sub_devices[self.selected_sub_device-1]
+
+    def get_pin_label_list(self):
+        if self.microcontroller == 2: # Atmega32U4
+            return constant.pro_micro_pin_label
+        elif self.microcontroller == 4: # ESP32
+            return constant.esp32_pin_label
+
+        else:
+            return []
 
     def init_from_header(self, header):
         self.device_name = header["device_name"]
