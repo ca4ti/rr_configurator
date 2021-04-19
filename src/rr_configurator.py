@@ -101,6 +101,9 @@ class Window(QWidget):
     def send_gpio_config_update(self, gpio_index):
         self.ser.send_gpio_config_update(gpio_index)
 
+    def send_button_matrix_config_update(self):
+        self.ser.send_button_matrix_config_update()
+
     def request_device_config(self, sub_device_index):
         self.ser.request_device_config(sub_device_index)
 

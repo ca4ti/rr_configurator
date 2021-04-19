@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QAbstractItemView , QVBoxLayout, QFrame, QWidget, QLabel, QGridLayout, QPushButton, QComboBox
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
+from functools import partial
 import constant
 
 class GUI_ButtonMatrixPage():
@@ -9,6 +10,8 @@ class GUI_ButtonMatrixPage():
         self.win = win
         self.frame = QFrame()
         # self.grid.show()
+
+        self.selected_input_assignment = 0
 
     def init_matrix_gui(self):
         self.grid = QGridLayout()
@@ -29,8 +32,19 @@ class GUI_ButtonMatrixPage():
         self.grid.addWidget(QLabel("N"), 0, 11, 1, 1)
         self.grid.addWidget(QLabel("S"), 0, 12, 1, 1)
 
+        self.input_assignment_combo_box = QComboBox()
+  
+        # setting geometry of combo box
+        self.input_assignment_combo_box.setGeometry(200, 150, 120, 30)
+        self.input_assignment_combo_box.activated[str].connect(self.on_assigned_input_combo_change)
+
+    
+        # adding list of items to combo box
+        self.input_assignment_combo_box.addItems(constant.list_assigned_input)
+
+
         for y in range(0, 17):
-            for x in range(0, 18):
+            for x in range(0, 17):
                 if (x == 0 and y == 0):
                     #self.grid.addWidget(widget, y, x*2)
                     pass
@@ -42,6 +56,8 @@ class GUI_ButtonMatrixPage():
                     widget.addItem("N/A")
                     for m in range(0, len(device.get_pin_label_list())):
                         widget.addItem(device.get_pin_label_list()[m])
+                    
+                    widget.activated[str].connect(partial(self.on_row_pin_assignment_combo_change, y, "matrix_row_label_" + str(y-1)))
 
                     
 
@@ -53,34 +69,91 @@ class GUI_ButtonMatrixPage():
                     for m in range(0, len(device.get_pin_label_list())):
                         widget.addItem(device.get_pin_label_list()[m])
 
+                    widget.activated[str].connect(partial(self.on_col_pin_assignment_combo_change, x, "matrix_col_label_" + str(x-1)))
+
                 else:
                     widget = QLabel("0")
                     self.grid.addWidget(widget, y+2, x*2+2)
-                    device.widgets["matrix_val_" + str(x-1) + "," + str(y-1)] = widget
+                    # device.widgets["matrix_val_" + str(x-1) + "," + str(y-1)] = widget
+                    device.matrix_state_widgets.append(widget)
 
-                    widget = QLabel("N/A")
+                    widget = QPushButton("Button 1")
                     self.grid.addWidget(widget, y+2, x*2+3)
-                    device.widgets["matrix_assignment_" + str(x-1) + "," + str(y-1)] = widget
+                    # device.widgets["matrix_assignment_" + str(x-1) + "," + str(y-1)] = widget
+                    device.matrix_assignment_widgets.append(widget)
+                    widget.pressed.connect(partial(self.open_select_input_combo, x, y))
+
 
         #self.grid.parent = self.layout
         self.frame.setFixedHeight(444)
         self.frame.setFixedWidth(900)
         self.frame.setLayout(self.grid)
 
+    def open_select_input_combo(self, x, y):
+        x = x-1
+        y = y-1
+        self.selected_input_assignment = y*16+x    
+
+        self.input_assignment_combo_box.setCurrentIndex(self.win.current_device.get_matrix_assignment(y*16+x))    
+        # showing the pop up
+        self.input_assignment_combo_box.showPopup()
+
+    
+    def on_assigned_input_combo_change(self):
+        idx = self.selected_input_assignment
+        assignment = self.input_assignment_combo_box.currentIndex()
+        self.win.current_device.set_matrix_assignment(idx, assignment)   
+        self.UpdateMatrixGUIValues()
+
+
+        print("setting matrix: " + str(idx) + " to " + str(assignment))
+        self.win.send_button_matrix_config_update()
+
+    def on_row_pin_assignment_combo_change(self, row, widget_name):
+        row -= 1
+        pinIdx = self.win.current_device.widgets[widget_name].currentIndex()
+        # pinIdx -= 1
+        # if pinIdx < 0: 
+        #     pinIdx = 254
+
+        self.win.current_device.set_matrix_row_pin(row, pinIdx)
+
+        self.win.send_button_matrix_config_update()
+
+    def on_col_pin_assignment_combo_change(self, col, widget_name):
+        col -= 1
+        pinIdx = self.win.current_device.widgets[widget_name].currentIndex()
+        # pinIdx -= 1
+        # if pinIdx < 0: 
+        #     pinIdx = 254
+        self.win.current_device.set_matrix_col_pin(col, pinIdx)
+
+        self.win.send_button_matrix_config_update()
+
+        
+
     def UpdateMatrixGUIValues(self):
+        print("GUI UPDATE")
         device = self.win.current_device
-        for row in range(0, 16):
-            pass
-            # if device.matrix_row_pins[row] == 254:
-            #     device.widgets["matrix_row_label_" + str(row)].setText("RowPin")
-            # else:
-            #     device.widgets["matrix_row_label_" + str(row)].setText(constant.pro_micro_pin_label[device.matrix_row_pins[row]])
+        for row in range(0, 16):       
+            if device.get_matrix_row_pin(row) > 32:
+                device.widgets["matrix_row_label_" + str(row)].setCurrentIndex(0)
+            else:     
+                device.widgets["matrix_row_label_" + str(row)].setCurrentIndex(device.get_matrix_row_pin(row)+1)
 
-            # if device.matrix_col_pins[row] == 254:
-            #     device.widgets["matrix_col_label_" + str(row)].setText("ColPin")
-            # else:
-            #     device.widgets["matrix_col_label_" + str(row)].setText(constant.pro_micro_pin_label[device.matrix_col_pins[row]])
-
+        for col in range(0, 16):    
+            #print(str(device.get_matrix_col_pin(col)+1))        
+            if device.get_matrix_col_pin(col) > 32:
+                #print(">32")
+                device.widgets["matrix_col_label_" + str(col)].setCurrentIndex(0)
+            else:     
+                #print("else")
+                device.widgets["matrix_col_label_" + str(col)].setCurrentIndex(device.get_matrix_col_pin(col)+1)
+           
+        for x in range(0, 256):
+            device.matrix_state_widgets[x].setText(str(0))
+            device.matrix_assignment_widgets[x].setText(constant.list_assigned_input[device.get_matrix_assignment(x)])
+        
 
     def hide(self):
         self.frame.hide()

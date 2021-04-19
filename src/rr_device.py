@@ -16,15 +16,37 @@ class RR_Device():
             self.matrix_col_pins.append(254)
             self.matrix_row_pins.append(254)
         self.matrix_assignments = [[0]*16]*16
-        for row in range(0, 16):
-            for col in range(0, 16):
-                self.matrix_assignments[col][row] = 0
+        self.matrix_assignment_widgets = []
+        self.matrix_state_widgets = []
+        
+        for i in range(0, 16*16):
+            self.matrix_assignments.append(0)
         
 
         # 0 == this device, subdevices are index+1
         self.selected_sub_device = 0
                 
-        self.widgets = {}        
+        self.widgets = {}   
+
+    def set_matrix_row_pin(self, idx, pin):
+        # print("row: " + str(idx))
+        self.matrix_row_pins[idx] = pin    
+
+    def get_matrix_row_pin(self, idx):
+        return self.matrix_row_pins[idx]
+    
+    def set_matrix_col_pin(self, idx, pin):
+        # print("col: " + str(idx))
+        self.matrix_col_pins[idx] = pin
+
+    def get_matrix_col_pin(self, idx):
+        return self.matrix_col_pins[idx]
+
+    def set_matrix_assignment(self, idx, assignment):
+        self.matrix_assignments[idx] = assignment
+
+    def get_matrix_assignment(self, idx):
+        return self.matrix_assignments[idx]
 
     def get_selected_device_name(self):
         if self.selected_sub_device == 0:
