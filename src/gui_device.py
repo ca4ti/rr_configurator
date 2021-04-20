@@ -424,6 +424,8 @@ class GUI_DevicePage():
 
             if gpio.pin_mode == constant.OUTPUT:
                 self.switch_gpio_to_OUTPUT_mode(gpio_index)
+            elif gpio.pin_mode == constant.RESERVED:
+                self.switch_gpio_to_RESERVED_mode(gpio_index)
             else:
                 self.switch_gpio_to_INPUT_mode(gpio_index)
                 
@@ -471,7 +473,6 @@ class GUI_DevicePage():
     
     def switch_gpio_to_OUTPUT_mode(self, gpio_index):
         gpio = self.win.current_device.gpios[gpio_index]
-
         
         gpio.widgets["input_type"].clear()
         gpio.widgets["input_type"].addItem("Always Off")
@@ -503,6 +504,19 @@ class GUI_DevicePage():
         gpio.widgets["dead_zone"].show()
         gpio.widgets["assigned_input"].show()
         gpio.widgets["raw_val"].show()
+
+    def switch_gpio_to_RESERVED_mode(self, gpio_index):
+        gpio = self.win.current_device.gpios[gpio_index]
+        
+        gpio.widgets["input_type"].hide()
+
+        gpio.widgets["is_inverted"].hide()
+        gpio.widgets["min"].hide()
+        gpio.widgets["mid"].hide()
+        gpio.widgets["max"].hide()
+        gpio.widgets["dead_zone"].hide()
+        gpio.widgets["assigned_input"].hide()
+        gpio.widgets["raw_val"].hide()
     
     def update_gpio_controls(self):
         device = self.win.current_device
@@ -513,6 +527,8 @@ class GUI_DevicePage():
 
             if gpio.pin_mode == constant.OUTPUT:
                 self.switch_gpio_to_OUTPUT_mode(i)
+            elif gpio.pin_mode == constant.RESERVED:
+                self.switch_gpio_to_RESERVED_mode(i)
             else:
                 self.switch_gpio_to_INPUT_mode(i)
 

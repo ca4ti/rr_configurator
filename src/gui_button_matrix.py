@@ -107,30 +107,52 @@ class GUI_ButtonMatrixPage():
 
 
         print("setting matrix: " + str(idx) + " to " + str(assignment))
-        self.win.send_button_matrix_config_update()
+        self.win.send_button_matrix_config_update([])
 
     def on_row_pin_assignment_combo_change(self, row, widget_name):
         row -= 1
-        pinIdx = self.win.current_device.widgets[widget_name].currentIndex()
+        pinIdx = self.win.current_device.widgets[widget_name].currentIndex()-1
         # pinIdx -= 1
-        # if pinIdx < 0: 
-        #     pinIdx = 254
+        if pinIdx < 0: 
+            pinIdx = 254
 
+        old_pin = self.win.current_device.get_matrix_row_pin(row)
         self.win.current_device.set_matrix_row_pin(row, pinIdx)
 
-        self.win.send_button_matrix_config_update()
+        if (not self.pin_is_in_matrix(old_pin)):
+            self.win.current_device.gpios[old_pin].pin_mode = constant.INPUT
+
+        self.win.current_device.set_reserved_pin(pinIdx)   
+        self.win.device_page.update_gpio_controls()    
+
+        self.win.send_button_matrix_config_update([old_pin, pinIdx])
 
     def on_col_pin_assignment_combo_change(self, col, widget_name):
         col -= 1
-        pinIdx = self.win.current_device.widgets[widget_name].currentIndex()
+        pinIdx = self.win.current_device.widgets[widget_name].currentIndex()-1
         # pinIdx -= 1
-        # if pinIdx < 0: 
-        #     pinIdx = 254
+        if pinIdx < 0: 
+            pinIdx = 254
+
+        old_pin = self.win.current_device.get_matrix_col_pin(col)
         self.win.current_device.set_matrix_col_pin(col, pinIdx)
 
-        self.win.send_button_matrix_config_update()
+        if (not self.pin_is_in_matrix(old_pin)):
+            self.win.current_device.gpios[old_pin].pin_mode = constant.INPUT
+        
+        self.win.current_device.set_reserved_pin(pinIdx)
+        self.win.device_page.update_gpio_controls()    
 
         
+        self.win.send_button_matrix_config_update([old_pin, pinIdx])
+
+    def pin_is_in_matrix(self, pin):
+        for i in range(0, 16):
+            if self.win.current_device.get_matrix_row_pin(i) == pin:
+                return True
+            if self.win.current_device.get_matrix_col_pin(i) == pin:
+                return True
+        return False
 
     def UpdateMatrixGUIValues(self):
         print("GUI UPDATE")

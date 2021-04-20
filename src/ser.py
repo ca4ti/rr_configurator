@@ -31,6 +31,8 @@ class SerialConnection:
         self.eol = QByteArray()
         self.eol.append("\r\n")
 
+        self.queuedGPIOUpdates = []
+
         self.serial = QtSerialPort.QSerialPort(
             '??',
             baudRate=115200,
@@ -105,7 +107,11 @@ class SerialConnection:
                 self.decode_gpio_input_values(text)
             elif text[0] == constant.HEADER_RECEIVE_TEXT_MESSAGE:
                 print("Received text message from device")
-                print(text[1:len(text)].decode())
+                try:
+                    print(text[1:len(text)].decode())
+                except:
+                    pass
+
                 cnt = 0
                 for t in text:
                     print(str(cnt) + "\t" + str(t))
@@ -138,7 +144,7 @@ class SerialConnection:
                     print(str(cnt) + "\t" + str(t))
                     cnt += 1
                 # self.decode_gpio_config_packet(text)
-                self.start_action(SerAction.CONNECTED)
+                self.start_action(SerAction.CONNECTED)                
 
             elif text[0] == constant.HEADER_SEND_MATRIX_CONFIG_UPDATE_RESPONSE:
                 print("Received config update confirmation")
@@ -147,8 +153,11 @@ class SerialConnection:
                 for t in text:
                     print(str(cnt) + "\t" + str(t))
                     cnt += 1
-                # self.decode_gpio_config_packet(text)
-                self.start_action(SerAction.CONNECTED)
+                if len(self.queuedGPIOUpdates) == 0:
+                    self.start_action(SerAction.CONNECTED)
+                else:
+                    self.send_gpio_config_update(self.queuedGPIOUpdates[0])
+                    self.queuedGPIOUpdates.remove(self.queuedGPIOUpdates[0])
 
             else:
                 print("unknown packet")
@@ -306,10 +315,19 @@ class SerialConnection:
                 gpio.calibrated_value = gpio.calibrated_value - 32767*2
             current_byte += 2
 
+        count = 0
+        for i in range(current_byte, len(data)):
+            self.win.current_device.set_matrix_button_state(count, data[current_byte])
+            # print(str(i) + "\t" + str(data[current_byte]))
+            count += 1
+            current_byte += 1
+            
+
         self.win.device_page.update_gpio_controls_values()
 
     def decode_gpio_config_packet(self, data):
         if len(data) != len(self.win.current_device.gpios) * constant.GPIO_CONFIG_LENGTH + constant.BUTTON_MATRIX_CONFIG_LENGTH + 4:
+        #if len(data) != len(self.win.current_device.gpios) * constant.GPIO_CONFIG_LENGTH + 4:
             print("ERROR: Incorrect GPIO Config packet length " + str(len(data)))
             print("Should be: " + str(len(self.win.current_device.gpios)
                                       * constant.GPIO_CONFIG_LENGTH + 4))
@@ -364,6 +382,7 @@ class SerialConnection:
         self.win.device_page.update_gpio_controls()
 
         print("Receiving Matrix Config")
+
 
         # Load Row Pins
         print("*** rows ***")
@@ -437,23 +456,24 @@ class SerialConnection:
         self.serial.write(self.config_update_packet)
         self.start_action(SerAction.WAITING_ON_MATRIX_UPDATE_CONFIRMATION)
 
-    def send_button_matrix_config_update(self):
+    def send_button_matrix_config_update(self, changed_gpios):
+        for i in range(0, len(changed_gpios)):
+            if changed_gpios[i] == 254:
+                continue
+            else:
+                self.queuedGPIOUpdates.append(changed_gpios[i])
+
         print("Sending Config Update for button matrix")
         device = self.win.current_device
         ba = bytearray()
         ba.append(constant.HEADER_SEND_BUTTON_MATRIX_CONFIG_UPDATE)
-
         
         for i in range(0, 16):
             pin = device.get_matrix_row_pin(i)
-            # if pin != 254:
-            #     pin -= 1
             print("send_row:" + str(pin))
             ba.append(pin)
         for i in range(0, 16):
             pin = device.get_matrix_col_pin(i)
-            # if pin != 254:
-            #     pin -= 1
             print("send_col:" + str(pin))
             ba.append(pin)
         for i in range(0, 256):

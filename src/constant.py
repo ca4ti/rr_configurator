@@ -1,7 +1,8 @@
 INPUT = 0               # 1  ESP32 Values
 OUTPUT = 1              # 2
 INPUT_PULLUP = 2        # 5
-UNKNOWN = 3
+RESERVED = 3            # reserved for button matrix or other special function
+UNKNOWN = 4
 
 NOAXIS = 0
 XAXIS = 1
@@ -47,7 +48,7 @@ HEADER_UPDATE_DEVICE_ADDRESS = 91
 
 list_device_types = ["UNKNOWN", "ATmega328", "ATmega32U4", "ATmega2560", "ESP32"]
 
-list_input_modes = ["INPUT", "OUTPUT", "INPUT_PULLUP"]#, "ENCODER0_A", "ENCODER0_B"]
+list_input_modes = ["INPUT", "OUTPUT", "INPUT_PULLUP", "RESERVED"]#, "ENCODER0_A", "ENCODER0_B"]
 
 list_analog_modes = ["DIGITAL", "ANALOG"]
 

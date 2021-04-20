@@ -18,9 +18,11 @@ class RR_Device():
         self.matrix_assignments = [[0]*16]*16
         self.matrix_assignment_widgets = []
         self.matrix_state_widgets = []
+        self.matrix_state = []
         
         for i in range(0, 16*16):
             self.matrix_assignments.append(0)
+            self.matrix_state.append(0)
         
 
         # 0 == this device, subdevices are index+1
@@ -28,9 +30,19 @@ class RR_Device():
                 
         self.widgets = {}   
 
-    def set_matrix_row_pin(self, idx, pin):
-        # print("row: " + str(idx))
-        self.matrix_row_pins[idx] = pin    
+    def set_reserved_pin(self, idx):
+        if idx != 254:
+            self.gpios[idx].pin_mode = constant.RESERVED        
+        #self.gpios[idx].widgets["pin_mode"].setCurrentIndex(constant.RESERVED) 
+    
+    def set_matrix_button_state(self, idx, state):
+        #self.matrix_state[idx] = state
+        if len(self.matrix_state_widgets) > idx:
+            self.matrix_state_widgets[idx].setText(str(state))
+
+
+    def set_matrix_row_pin(self, idx, pin):        
+        self.matrix_row_pins[idx] = pin
 
     def get_matrix_row_pin(self, idx):
         return self.matrix_row_pins[idx]
