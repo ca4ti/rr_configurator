@@ -102,6 +102,7 @@ class GUI_ButtonMatrixPage():
     def on_assigned_input_combo_change(self):
         idx = self.selected_input_assignment
         assignment = self.input_assignment_combo_box.currentIndex()
+        
         self.win.current_device.set_matrix_assignment(idx, assignment)   
         self.UpdateMatrixGUIValues()
 
@@ -110,6 +111,8 @@ class GUI_ButtonMatrixPage():
         self.win.send_button_matrix_config_update([])
 
     def on_row_pin_assignment_combo_change(self, row, widget_name):
+        print("row: " + str(row) + ", " + widget_name)
+
         row -= 1
         pinIdx = self.win.current_device.widgets[widget_name].currentIndex()-1
         # pinIdx -= 1
@@ -125,9 +128,13 @@ class GUI_ButtonMatrixPage():
         self.win.current_device.set_reserved_pin(pinIdx)   
         self.win.device_page.update_gpio_controls()    
 
+        
+
         self.win.send_button_matrix_config_update([old_pin, pinIdx])
 
     def on_col_pin_assignment_combo_change(self, col, widget_name):
+        print("col: " + str(col) + ", " + widget_name)
+
         col -= 1
         pinIdx = self.win.current_device.widgets[widget_name].currentIndex()-1
         # pinIdx -= 1

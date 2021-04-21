@@ -482,7 +482,7 @@ class GUI_DevicePage():
         gpio.widgets["input_type"].show()
 
         gpio.widgets["is_inverted"].hide()
-        gpio.widgets["min"].hide()
+        gpio.widgets["min"].show()
         gpio.widgets["mid"].hide()
         gpio.widgets["max"].hide()
         gpio.widgets["dead_zone"].hide()
