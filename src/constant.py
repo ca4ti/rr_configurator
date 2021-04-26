@@ -53,7 +53,7 @@ list_input_modes = ["INPUT", "OUTPUT", "INPUT_PULLUP", "RESERVED"]#, "ENCODER0_A
 
 list_analog_modes = ["DIGITAL", "ANALOG"]
 
-pro_micro_pin_label = ["A0", "A1", "A2", "A3", "A6", "A7", "A8", "A9", "A10", "D2", "D3", "D5", 
+pro_micro_pin_label = ["A0", "A1", "A2", "A3", "D4", "D6", "D8", "D9", "D10", "D2", "D3", "D5", 
                        "D7", "D14", "D15", "D16"]
 
 pro_micro_pin_idx = [18, 19, 20, 21, 4, 6, 8, 9, 10, 2,  3,  5,
