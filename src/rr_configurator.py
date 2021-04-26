@@ -59,6 +59,7 @@ class Window(QWidget):
 
     def reset(self, error=""):
         self.device_page.hide()
+        self.device_page.matrix.hide()
         self.current_device = None
         self.ser.close()
         self.connect_page.show()
@@ -72,6 +73,9 @@ class Window(QWidget):
 
     def commit_to_eeprom(self):
         self.ser.commit_to_eeprom()
+
+    def reset_to_defaults(self):
+        self.ser.reset_to_defaults()
 
     def select_sub_device(self, sub_device_index):
         self.ser.select_sub_device(sub_device_index)

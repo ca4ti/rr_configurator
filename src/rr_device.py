@@ -41,6 +41,30 @@ class RR_Device():
             self.matrix_state_widgets[idx].setText(str(state))
 
 
+    # data comes in column by columns, 2 bytes per column. need to change to
+    # 1d array row by row
+    def set_matrix_button_state_all(self, button_state_matrix):
+        # This is horribly ineffcient but i can't think of a good way to do it now
+        arr = []
+        for col in range(0, 32):
+            for bit in range(0, 8):
+                arr.append(button_state_matrix[col][bit])        
+        
+        mat = []
+        for x in range(0, 16):
+            mat.append([])
+            for y in range(0, 16):
+                mat[x].append(0)
+
+        for x in range(0, 256):
+            mat[int(x%16)][int(x/16)] = arr[x]
+
+        count = 0
+        for x in range(0, 16):           
+            for y in range(0, 16):
+                self.matrix_state_widgets[count].setText(str(mat[x][y]))
+                count += 1
+
     def set_matrix_row_pin(self, idx, pin):        
         self.matrix_row_pins[idx] = pin
 

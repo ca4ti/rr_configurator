@@ -41,6 +41,7 @@ HEADER_REQUEST_GPIO_CONFIG = 80  # subdevice address should follow
 HEADER_SEND_GPIO_CONFIG_UPDATE = 82  # single gpio update to device
 HEADER_SEND_BUTTON_MATRIX_CONFIG_UPDATE = 92  # full button matrix config
 HEADER_COMMIT_TO_EEPROM = 85
+HEADER_RESET_TO_DEFAULTS = 72
 HEADER_SELECT_SUB_DEVICE = 87
 HEADER_UPDATE_DEVICE_NAME = 89
 HEADER_UPDATE_DEVICE_ADDRESS = 91
@@ -68,9 +69,17 @@ list_assigned_input = ["NONE", "XAXIS", "YAXIS", "ZAXIS", "XROTATION", "YROTATIO
                        "HAT3_N", "HAT3_NE", "HAT3_E", "HAT3_SE", "HAT3_S", "HAT3_SW", "HAT3_W", "HAT3_NW",
                        "HAT4_N", "HAT4_NE", "HAT4_E", "HAT4_SE", "HAT4_S", "HAT4_SW", "HAT4_W", "HAT4_NW"]
 
+list_assigned_input_short = ["NONE", "XAXIS", "YAXIS", "ZAXIS", "XROT", "YROT", "ZROT", "SLDR0", 
+                       "SLDR1", "!RSVD!", "!RSVD!", "!RSVD!",
+                       "H1_N", "H1_NE", "H1_E", "H1_SE", "H1_S", "H1_SW", "H1_W", "H1_NW",
+                       "H2_N", "H2_NE", "H2_E", "H2_SE", "H2_S", "H2_SW", "H2_W", "H2_NW",
+                       "H3_N", "H3_NE", "H3_E", "H3_SE", "H3_S", "H3_SW", "H3_W", "H3_NW",
+                       "H4_N", "H4_NE", "H4_E", "H4_SE", "H4_S", "H4_SW", "H4_W", "H4_NW"]
+
 # Add BUTTON1..128 to list_assigned_input
 for i in range(1, 129):
     list_assigned_input.append("BUTTON" + str(i))
+    list_assigned_input_short.append("BTN" + str(i))
 
 
 def pin_label_to_idx(pin_label):

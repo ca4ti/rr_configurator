@@ -25,6 +25,7 @@ class GUI_DevicePage():
         self.mode = MODE_NORMAL
 
     def init_device_controls(self):
+        self.mode = MODE_NORMAL
         device = self.win.current_device
         xpos = 0
         ypos = 0
@@ -46,6 +47,13 @@ class GUI_DevicePage():
         widget.show()
         widget.clicked.connect(lambda: self.win.commit_to_eeprom())
         device.widgets["btn_commit_to_eeprom"] = widget  
+
+        widget = QPushButton(self.win)
+        widget.setText("Reset To Defaults")
+        #widget.move(self.offset[0] + 620, self.offset[1]+25)
+        widget.show()
+        widget.clicked.connect(lambda: self.win.reset_to_defaults())
+        device.widgets["btn_reset_to_defaults"] = widget  
 
         widget = QPushButton(self.win)
         widget.setText("Button Matrix")
@@ -133,6 +141,7 @@ class GUI_DevicePage():
 
         self.topButtonsGridLayout.addWidget(device.widgets["btn_disconnect"], 0, 5, 1, 1)
         self.topButtonsGridLayout.addWidget(device.widgets["btn_commit_to_eeprom"], 1, 5, 1, 1)
+        self.topButtonsGridLayout.addWidget(device.widgets["btn_reset_to_defaults"], 2, 5, 1, 1)
 
         self.topButtonsGridLayout.addWidget(device.widgets["btn_button_matrix"], 2, 3, 1, 1)
 
@@ -572,6 +581,8 @@ class GUI_DevicePage():
         # self.layout.addLayout(self.matrix.grid)
         
         pass
+
+    
 
     def show(self):
         print("showing device page")

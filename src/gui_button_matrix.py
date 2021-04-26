@@ -1,6 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QAbstractItemView , QVBoxLayout, QFrame, QWidget, QLabel, QGridLayout, QPushButton, QComboBox
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication, QAbstractItemView, QVBoxLayout, QFrame, QWidget, QLabel, QGridLayout, QPushButton, QComboBox
+from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import pyqtSlot
 from functools import partial
 import constant
@@ -78,6 +78,7 @@ class GUI_ButtonMatrixPage():
                     device.matrix_state_widgets.append(widget)
 
                     widget = QPushButton("Button 1")
+                    widget.setFont(QFont('Condensed', 6.5))
                     self.grid.addWidget(widget, y+2, x*2+3)
                     # device.widgets["matrix_assignment_" + str(x-1) + "," + str(y-1)] = widget
                     device.matrix_assignment_widgets.append(widget)
@@ -181,7 +182,7 @@ class GUI_ButtonMatrixPage():
            
         for x in range(0, 256):
             device.matrix_state_widgets[x].setText(str(0))
-            device.matrix_assignment_widgets[x].setText(constant.list_assigned_input[device.get_matrix_assignment(x)])
+            device.matrix_assignment_widgets[x].setText(constant.list_assigned_input_short[device.get_matrix_assignment(x)])
         
 
     def hide(self):

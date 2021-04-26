@@ -16,6 +16,7 @@ class SerAction(Enum):
     WAITING_ON_GPIO_CONFIG = 3
     WAITING_ON_GPIO_UPDATE_CONFIRMATION = 4
     WAITING_ON_MATRIX_UPDATE_CONFIRMATION = 5
+    WAITING_ON_RESET_TO_DEFAULTS_CONFIRMATION = 6
 
 
 HANDSHAKE_TIMEOUT = 0.5
@@ -130,6 +131,11 @@ class SerialConnection:
 
                 # self.start_action(SerAction.CONNECTED)
 
+            elif text[0] == constant.HEADER_RESET_TO_DEFAULTS:
+                print("Received Reset to defaults confirmation")
+                self.start_action(SerAction.CONNECTED)
+                self.request_device_config(0)
+
             elif text[0] == constant.HEADER_REQUEST_GPIO_CONFIG_RESPONSE:
                 print("Received config")
                 print(len(text))
@@ -187,6 +193,12 @@ class SerialConnection:
                 print("matrix config update failed")
                 self.try_resend_matrix_config_update_packet()
 
+        elif self.action == SerAction.WAITING_ON_RESET_TO_DEFAULTS_CONFIRMATION:
+
+            if time.time() - self.actionStartTime > 5:
+                print("reset to defaults timeout...")
+                self.reset_to_defaults()
+
     def commit_to_eeprom(self):
         ba = bytearray()
         ba.append(constant.HEADER_COMMIT_TO_EEPROM)
@@ -197,6 +209,18 @@ class SerialConnection:
         b = bytes(ba)
         self.serial.write(b)
         self.start_action(SerAction.CONNECTED)
+
+    def reset_to_defaults(self):
+        print("resettnig to defaults")
+        ba = bytearray()
+        ba.append(constant.HEADER_RESET_TO_DEFAULTS)
+
+        ba.append(ord('\r'))
+        ba.append(ord('\n'))
+
+        b = bytes(ba)
+        self.serial.write(b)
+        self.start_action(SerAction.WAITING_ON_RESET_TO_DEFAULTS_CONFIRMATION)
 
     def send_device_name_update(self, new_name):
         if len(new_name) != 16:
@@ -316,21 +340,30 @@ class SerialConnection:
             current_byte += 2
 
         count = 0
-        for i in range(current_byte, len(data)):
-            self.win.current_device.set_matrix_button_state(count, data[current_byte])
+        button_state = []
+        for i in range(current_byte, len(data)-2):
+            column = []
+            for z in range(0, 8):
+                column.append(data[current_byte] >> z & 1)
+            button_state.append(column)
+
+
+            #self.win.current_device.set_matrix_button_state(count, data[current_byte])
             # print(str(i) + "\t" + str(data[current_byte]))
             count += 1
             current_byte += 1
-            
+
+        self.win.current_device.set_matrix_button_state_all(button_state)
+        #print(str(len(button_state)) + ", " + str(len(button_state[0])))
 
         self.win.device_page.update_gpio_controls_values()
 
     def decode_gpio_config_packet(self, data):
-        if len(data) != len(self.win.current_device.gpios) * constant.GPIO_CONFIG_LENGTH + constant.BUTTON_MATRIX_CONFIG_LENGTH + 4:
+        expected_packet_len = len(self.win.current_device.gpios) * constant.GPIO_CONFIG_LENGTH + constant.BUTTON_MATRIX_CONFIG_LENGTH + 4
+        if len(data) != expected_packet_len:
         #if len(data) != len(self.win.current_device.gpios) * constant.GPIO_CONFIG_LENGTH + 4:
             print("ERROR: Incorrect GPIO Config packet length " + str(len(data)))
-            print("Should be: " + str(len(self.win.current_device.gpios)
-                                      * constant.GPIO_CONFIG_LENGTH + 4))
+            print("Should be: " + str(expected_packet_len))
             print(data)
             count = 0
             for d in data:
