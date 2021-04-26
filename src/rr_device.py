@@ -57,7 +57,7 @@ class RR_Device():
                 mat[x].append(0)
 
         for x in range(0, 256):
-            mat[int(x%16)][int(x/16)] = arr[x]
+            mat[int(x/16)][int(x%16)] = arr[x]
 
         count = 0
         for x in range(0, 16):           
