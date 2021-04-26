@@ -19,7 +19,6 @@
     - Teensy boards
     - easy way for users to add boards themselves?
 
-- 11+ bit precision from boards capable
 - change name reported to OS
 - toggleable button debouncing
 
