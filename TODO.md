@@ -2,6 +2,8 @@
 
 - Support for i2c/spi modules like MPU6050 and ADXL345
 
+- toggle on/off button options
+
 - Implement bluetooth HID code to USBHID and discontinue use of Joystick.h for own code
 
 - increase possible inputs
@@ -20,8 +22,8 @@
 - 11+ bit precision from boards capable
 - change name reported to OS
 - toggleable button debouncing
+
 - outputs (biggest thing is implementing an interface)
-    - flashy leds
     - WS2812b compatibility 
     - buzzer (mostly want tactile response on throttle positions)
 
@@ -31,3 +33,6 @@
 
 - Force Feedback
 - 5-pin din compatibility with other devices (legal?)
+
+
+## Known Bugs

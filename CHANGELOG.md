@@ -1,3 +1,8 @@
+# v1.0.4 (?/-??-????)
+- Button matrices of up to 16x16 are now supported
+
+- Outputs are partially implemented, a pin can now be assigned to permananently provide 5v, flash or pulse.
+
 # v1.0.3 (02-04-2021)
 - GUI now scrolls to accomodate more GPIOs and hopefully larger fonts
 
