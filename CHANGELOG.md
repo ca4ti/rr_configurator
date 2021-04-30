@@ -1,4 +1,4 @@
-# v1.0.4 (?/-??-????)
+# v1.0.4 (26-04-2021)
 - Button matrices of up to 16x16 are now supported
 
 - Outputs are partially implemented, a pin can now be assigned to permananently provide 5v, flash or pulse.
