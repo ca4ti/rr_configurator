@@ -407,14 +407,13 @@ class SerialConnection:
 
         current_byte += 1  # first byte of first gpio config
         print("RECEIVING CONFIG!!!")
-        print(len(self.win.current_device.gpios))
+        print("Inputs: " + str(len(self.win.current_device.gpios)))
         for i in range(0, input_count):
             gpio = self.win.current_device.gpios[i]
 
             #  current_gpio.pin_number = data[current_byte]
             current_byte += 1
             gpio.pin_mode = data[current_byte]
-            print(gpio.pin_mode)
             current_byte += 1
             gpio.is_analog = data[current_byte]
             current_byte += 1
@@ -471,7 +470,7 @@ class SerialConnection:
 
     def send_gpio_config_update(self, gpio_index):
         print("Sending Config Update for gpio " + str(gpio_index))
-        gpio = self.win.current_device.get_selected_device().gpios[gpio_index]
+        gpio = self.win.current_device.gpios[gpio_index]
         ba = bytearray()
         ba.append(constant.HEADER_SEND_GPIO_CONFIG_UPDATE)
 
