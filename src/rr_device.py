@@ -44,7 +44,11 @@ class RR_Device():
     # data comes in column by columns, 2 bytes per column. need to change to
     # 1d array row by row
     def set_matrix_button_state_all(self, button_state_matrix):
-        # This is horribly ineffcient but i can't think of a good way to do it now
+        # This is horribly ineffcient but i can't think of a good way to do it now      
+         
+        if len(button_state_matrix) < 32:
+            return 
+          
         arr = []
         for col in range(0, 32):
             for bit in range(0, 8):
@@ -119,7 +123,8 @@ class RR_Device():
             return constant.pro_micro_pin_label
         elif self.microcontroller == 4: # ESP32
             return constant.esp32_pin_label
-
+        elif self.microcontroller == 3: # MEGA2560
+            return constant.mega2560_pin_label
         else:
             return []
 
@@ -138,12 +143,15 @@ class RR_Device():
 
     # GPIO count and labels based on microcontroller presets
     def init_gpios(self):
-        for i in range(0, len(constant.pro_micro_pin_idx)):
+        for i in range(0, len(self.get_pin_label_list())):
             gpio = RR_GPIO(self.address, i)
             #print("MICROCONTROLLER: " + str(self.microcontroller))
             if (self.microcontroller == 4):
                 gpio.pin_number = constant.esp32_pin_idx[i]
                 gpio.pin_label = None  #constant.esp32_pin_label[i]
+            elif (self.microcontroller == 3):
+                gpio.pin_number = constant.mega2560_pin_idx[i]
+                gpio.pin_label = constant.mega2560_pin_label[i]
             else:
                 gpio.pin_number = constant.pro_micro_pin_idx[i]
                 gpio.pin_label = constant.pro_micro_pin_label[i]

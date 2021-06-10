@@ -19,7 +19,7 @@ class SerAction(Enum):
     WAITING_ON_RESET_TO_DEFAULTS_CONFIRMATION = 6
 
 
-HANDSHAKE_TIMEOUT = 0.5
+HANDSHAKE_TIMEOUT = 2
 
 
 class SerialConnection:
@@ -51,7 +51,17 @@ class SerialConnection:
         )
         self.serial.open(QIODevice.ReadWrite)
 
-        self.serial.write((chr(constant.HEADER_HANDSHAKE) + "\r\n").encode())
+        #self.serial.write((chr(constant.HEADER_HANDSHAKE) + "\r\n").encode())
+
+        # ba = bytearray()
+        # ba.append(ord('J'))
+
+        # ba.append(ord('\r'))
+        # ba.append(ord('\n'))
+
+        # b = bytes(ba)
+        # self.serial.write(b)
+
         self.start_action(SerAction.WAITING_ON_HANDSHAKE)
         self.handshake_tries = 0
 
@@ -69,16 +79,17 @@ class SerialConnection:
             self.win.reset("ERROR: Handshake failed (is it the correct port?)")
         else:
             self.handshake_tries += 1
-            self.serial.close()
+            # self.serial.close()
 
-            self.serial = QtSerialPort.QSerialPort(
-                self.port,
-                baudRate=115200,
-                readyRead=self.receive
-            )
-            self.serial.open(QIODevice.ReadWrite)
-            self.serial.write(
-                (chr(constant.HEADER_HANDSHAKE) + "\r\n").encode())
+            # self.serial = QtSerialPort.QSerialPort(
+            #     self.port,
+            #     baudRate=115200,
+            #     readyRead=self.receive
+            # )
+            # self.serial.open(QIODevice.ReadWrite)
+            # self.serial.write(
+            #     (chr(constant.HEADER_HANDSHAKE) + "\r\n").encode())
+            self.serial.write((chr(constant.HEADER_HANDSHAKE) + "\r\n").encode())
             self.start_action(SerAction.WAITING_ON_HANDSHAKE)
 
     def close(self):
@@ -86,7 +97,7 @@ class SerialConnection:
         self.serial.close()
 
     def receive(self):
-        # print("received")
+        
         self.char_buffer += self.serial.readAll()
 
         if self.char_buffer.contains(self.eol):
@@ -271,7 +282,7 @@ class SerialConnection:
         #print("changed subdevice selection to: " + str(sub_device_index))
 
     def decode_id_packet(self, data):
-
+        print("************ Decoding ID Packet ******************")
         # if len(data) != constant.ID_PACKET_LENGTH:
         #     print("ERROR: Incorrect ID packet length " + str(len(data)))
         #     print(data)
@@ -326,8 +337,11 @@ class SerialConnection:
         #     print(str(cnt) + "\t" + str(t))
         #     cnt += 1
 
-        for i in range(0, len(self.win.current_device.gpios)):
-            gpio = self.win.current_device.gpios[i]
+        for i in range(0, len(self.win.current_device.get_selected_device().gpios)):
+            if len(data) < current_byte + 9:
+                continue
+
+            gpio = self.win.current_device.get_selected_device().gpios[i]
 
             gpio.raw_val = data[current_byte] << 8
             gpio.raw_val += data[current_byte+1]
@@ -360,34 +374,38 @@ class SerialConnection:
 
     def decode_gpio_config_packet(self, data):
         expected_packet_len = len(self.win.current_device.gpios) * constant.GPIO_CONFIG_LENGTH + constant.BUTTON_MATRIX_CONFIG_LENGTH + 4
-        if len(data) != expected_packet_len:
-        #if len(data) != len(self.win.current_device.gpios) * constant.GPIO_CONFIG_LENGTH + 4:
-            print("ERROR: Incorrect GPIO Config packet length " + str(len(data)))
-            print("Should be: " + str(expected_packet_len))
-            print(data)
-            count = 0
-            for d in data:
-                print(str(count) + "\t" + str(d))
-                count += 1
-            self.win.reset(
-                "ERROR: Incorrect GPIO Config packet length: " + str(len(data)))
-            return
+        # if len(data) != expected_packet_len:
+        #     print("ERROR: Incorrect GPIO Config packet length " + str(len(data)))
+        #     print("Should be: " + str(expected_packet_len))
+        #     print(data)
+        #     count = 0
+        #     for d in data:
+        #         print(str(count) + "\t" + str(d))
+        #         count += 1
+        #     self.win.reset(
+        #         "ERROR: Incorrect GPIO Config packet length: " + str(len(data)))
+        #     return
 
         # print("HERE IS THE DATA>>>")
         # print(data)
 
         current_byte = 1  # skip header byte
-        input_count = data[current_byte]
-        if input_count != len(self.win.current_device.gpios):
-            print("ERROR: Incorrect GPIO count " +
-                  str(len(self.win.current_device.gpios)))
-            self.win.reset("ERROR: Incorrect GPIO count: " +
-                           str(len(self.win.current_device.gpios)))
+        input_count = data[current_byte]       
+        
+        # if gpio count doesn't match device count then config hasn't update yet
+        if len(self.win.current_device.gpios) != input_count:
             return
+
+        # if input_count != len(self.win.current_device.gpios):
+        #     print("ERROR: Incorrect GPIO count " +
+        #           str(len(self.win.current_device.gpios)))
+        #     self.win.reset("ERROR: Incorrect GPIO count: " +
+        #                    str(len(self.win.current_device.gpios)))
+        #     return
 
         current_byte += 1  # first byte of first gpio config
         for i in range(0, input_count):
-            gpio = self.win.current_device.gpios[i]
+            gpio = self.win.current_device.get_selected_device().gpios[i]
 
             #  current_gpio.pin_number = data[current_byte]
             current_byte += 1
@@ -448,7 +466,7 @@ class SerialConnection:
 
     def send_gpio_config_update(self, gpio_index):
         print("Sending Config Update for gpio " + str(gpio_index))
-        gpio = self.win.current_device.gpios[gpio_index]
+        gpio = self.win.current_device.get_selected_device().gpios[gpio_index]
         ba = bytearray()
         ba.append(constant.HEADER_SEND_GPIO_CONFIG_UPDATE)
 

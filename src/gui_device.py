@@ -238,8 +238,56 @@ class GUI_DevicePage():
             c += 1
 
         ypos += 90
+
+        self.LoadGPIOControls()
+            
+        self.groupBox.setLayout(self.scrollingGridLayout)
+        #self.gpio_scroll_area = QScrollArea()
+        self.gpioScrollArea.setWidget(self.groupBox)
+        self.gpioScrollArea.setWidgetResizable(True)
+        self.gpioScrollArea.setFixedHeight(444)
+        
+        self.gpioScrollArea.setFixedWidth(900)
+
+        self.layout.addLayout(self.topButtonsGridLayout)
+        self.layout.addWidget(self.gpioScrollArea)
+        #self.gpioScrollArea.hide()
+
+        self.matrix = gui_button_matrix.GUI_ButtonMatrixPage(self.win)
+        self.matrix.init_matrix_gui()
+        self.layout.addWidget(self.matrix.frame)
+        self.matrix.hide()
+
+    def LoadGPIOControls(self):
+        device = self.win.current_device
+        for i in range(len(device.gpios)):
+            if "label" in device.gpios[i].widgets:
+                device.gpios[i].widgets["label"].hide()
+            if "pin_mode" in device.gpios[i].widgets:
+                device.gpios[i].widgets["pin_mode"].hide()
+            if "input_type" in device.gpios[i].widgets:
+                device.gpios[i].widgets["input_type"].hide()
+            if "is_inverted" in device.gpios[i].widgets:
+                device.gpios[i].widgets["is_inverted"].hide()
+            if "min" in device.gpios[i].widgets:
+                device.gpios[i].widgets["min"].hide()
+            if "mid" in device.gpios[i].widgets:
+                device.gpios[i].widgets["mid"].hide()
+            if "max" in device.gpios[i].widgets:
+                device.gpios[i].widgets["max"].hide()
+            if "dead_zone" in device.gpios[i].widgets:
+                device.gpios[i].widgets["dead_zone"].hide()
+            if "assigned_input" in device.gpios[i].widgets:
+                device.gpios[i].widgets["assigned_input"].hide()
+            if "raw_val" in device.gpios[i].widgets:
+                device.gpios[i].widgets["raw_val"].hide()
+            if "calibrated_val" in device.gpios[i].widgets:
+                device.gpios[i].widgets["calibrated_val"].hide()
+
+        device = self.win.current_device.get_selected_device()
+
         # GPIO controls
-        for i in range(0, len(self.win.current_device.gpios)):   
+        for i in range(0, len(device.gpios)):   
             widgets = []         
 
             # Label
@@ -350,9 +398,6 @@ class GUI_DevicePage():
             widget.show()
             device.gpios[i].widgets["calibrated_val"] = widget
             widgets.append(widget)
-
-
-
             
             c = 0
             for w in widgets:  
@@ -361,23 +406,6 @@ class GUI_DevicePage():
                 #w.setFixedHeight(30)   
                 self.scrollingGridLayout.addWidget(w, i+1, c, 1, 1)
                 c += 1
-            
-        self.groupBox.setLayout(self.scrollingGridLayout)
-        #self.gpio_scroll_area = QScrollArea()
-        self.gpioScrollArea.setWidget(self.groupBox)
-        self.gpioScrollArea.setWidgetResizable(True)
-        self.gpioScrollArea.setFixedHeight(444)
-        
-        self.gpioScrollArea.setFixedWidth(900)
-
-        self.layout.addLayout(self.topButtonsGridLayout)
-        self.layout.addWidget(self.gpioScrollArea)
-        #self.gpioScrollArea.hide()
-
-        self.matrix = gui_button_matrix.GUI_ButtonMatrixPage(self.win)
-        self.matrix.init_matrix_gui()
-        self.layout.addWidget(self.matrix.frame)
-        self.matrix.hide()
 
     def on_change_selected_device(self, sub_device_index):
         device = self.win.current_device
@@ -388,6 +416,8 @@ class GUI_DevicePage():
         device.widgets["label_firmware_version"].setText("Firmware Version:\t" + device.get_selected_firmware_version())
         device.widgets["input_device_address"].setText(str(device.get_selected_device_address()))
         #self.win.select_sub_device(sub_device_index)
+        print(self.win.current_device.get_selected_device().gpios)
+        self.LoadGPIOControls()
         self.win.request_device_config(sub_device_index)
 
     def on_combo_change(self, gpio_index, control):
@@ -528,7 +558,7 @@ class GUI_DevicePage():
         gpio.widgets["raw_val"].hide()
     
     def update_gpio_controls(self):
-        device = self.win.current_device
+        device = self.win.current_device.get_selected_
         for i in range(0, len(self.win.current_device.gpios)):  
             gpio = device.gpios[i]
             
