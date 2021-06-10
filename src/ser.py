@@ -337,11 +337,11 @@ class SerialConnection:
         #     print(str(cnt) + "\t" + str(t))
         #     cnt += 1
 
-        for i in range(0, len(self.win.current_device.get_selected_device().gpios)):
+        for i in range(0, len(self.win.current_device.gpios)):
             if len(data) < current_byte + 9:
                 continue
 
-            gpio = self.win.current_device.get_selected_device().gpios[i]
+            gpio = self.win.current_device.gpios[i]
 
             gpio.raw_val = data[current_byte] << 8
             gpio.raw_val += data[current_byte+1]
@@ -394,7 +394,9 @@ class SerialConnection:
         
         # if gpio count doesn't match device count then config hasn't update yet
         if len(self.win.current_device.gpios) != input_count:
-            return
+            print("Count doesn't match")
+            self.win.current_device.init_gpios_forced(self.win.current_device.get_selected_device().microcontroller)
+            #return
 
         # if input_count != len(self.win.current_device.gpios):
         #     print("ERROR: Incorrect GPIO count " +
@@ -404,12 +406,15 @@ class SerialConnection:
         #     return
 
         current_byte += 1  # first byte of first gpio config
+        print("RECEIVING CONFIG!!!")
+        print(len(self.win.current_device.gpios))
         for i in range(0, input_count):
-            gpio = self.win.current_device.get_selected_device().gpios[i]
+            gpio = self.win.current_device.gpios[i]
 
             #  current_gpio.pin_number = data[current_byte]
             current_byte += 1
             gpio.pin_mode = data[current_byte]
+            print(gpio.pin_mode)
             current_byte += 1
             gpio.is_analog = data[current_byte]
             current_byte += 1

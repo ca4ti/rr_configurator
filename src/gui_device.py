@@ -263,36 +263,48 @@ class GUI_DevicePage():
         for i in range(len(device.gpios)):
             if "label" in device.gpios[i].widgets:
                 device.gpios[i].widgets["label"].hide()
+                device.gpios[i].widgets.pop("label", None)
             if "pin_mode" in device.gpios[i].widgets:
                 device.gpios[i].widgets["pin_mode"].hide()
+                device.gpios[i].widgets.pop("pin_mode", None)
             if "input_type" in device.gpios[i].widgets:
                 device.gpios[i].widgets["input_type"].hide()
+                device.gpios[i].widgets.pop("input_type", None)
             if "is_inverted" in device.gpios[i].widgets:
                 device.gpios[i].widgets["is_inverted"].hide()
+                device.gpios[i].widgets.pop("is_inverted", None)
             if "min" in device.gpios[i].widgets:
                 device.gpios[i].widgets["min"].hide()
+                device.gpios[i].widgets.pop("min", None)
             if "mid" in device.gpios[i].widgets:
                 device.gpios[i].widgets["mid"].hide()
+                device.gpios[i].widgets.pop("mid", None)
             if "max" in device.gpios[i].widgets:
                 device.gpios[i].widgets["max"].hide()
+                device.gpios[i].widgets.pop("max", None)
             if "dead_zone" in device.gpios[i].widgets:
                 device.gpios[i].widgets["dead_zone"].hide()
+                device.gpios[i].widgets.pop("dead_zone", None)
             if "assigned_input" in device.gpios[i].widgets:
                 device.gpios[i].widgets["assigned_input"].hide()
+                device.gpios[i].widgets.pop("assigned_input", None)
             if "raw_val" in device.gpios[i].widgets:
                 device.gpios[i].widgets["raw_val"].hide()
+                device.gpios[i].widgets.pop("raw_val", None)
             if "calibrated_val" in device.gpios[i].widgets:
                 device.gpios[i].widgets["calibrated_val"].hide()
+                device.gpios[i].widgets.pop("calibrated_val", None)
 
-        device = self.win.current_device.get_selected_device()
-
+        device = self.win.current_device
+        device.init_gpios_forced(device.get_selected_device().microcontroller)
         # GPIO controls
-        for i in range(0, len(device.gpios)):   
-            widgets = []         
+        for i in range(0, len(device.gpios)):  
+            widgets = []       
+            print("making gpio " + str(i))  
 
             # Label
             widget = QLabel(self.win)
-            widget.setText(device.gpios[i].get_pin_label())
+            widget.setText(device.get_selected_device().gpios[i].get_pin_label())
             xpos = 0
             #widget.move(self.offset[0], self.offset[1] + ypos + i*self.ygap +3)
             widget.show()
@@ -558,8 +570,9 @@ class GUI_DevicePage():
         gpio.widgets["raw_val"].hide()
     
     def update_gpio_controls(self):
-        device = self.win.current_device.get_selected_
+        device = self.win.current_device
         for i in range(0, len(self.win.current_device.gpios)):  
+            
             gpio = device.gpios[i]
             
             gpio.widgets["pin_mode"].setCurrentIndex(gpio.pin_mode)

@@ -79,6 +79,19 @@ list_assigned_input_short = ["NONE", "XAXIS", "YAXIS", "ZAXIS", "XROT", "YROT", 
                        "H3_N", "H3_NE", "H3_E", "H3_SE", "H3_S", "H3_SW", "H3_W", "H3_NW",
                        "H4_N", "H4_NE", "H4_E", "H4_SE", "H4_S", "H4_SW", "H4_W", "H4_NW"]
 
+
+def get_pin_label_count(microcontroller):
+    if microcontroller == 0:
+        return 0
+    elif microcontroller == 1:
+        return 16
+    elif microcontroller == 2:
+        return len(pro_micro_pin_idx)
+    elif microcontroller == 3:
+        return len(mega2560_pin_idx)
+    elif microcontroller == 4:
+        return len(esp32_pin_idx)
+
 # Add BUTTON1..128 to list_assigned_input
 for i in range(1, 129):
     list_assigned_input.append("BUTTON" + str(i))
