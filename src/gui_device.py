@@ -304,7 +304,7 @@ class GUI_DevicePage():
 
             # Label
             widget = QLabel(self.win)
-            widget.setText(device.get_selected_device().gpios[i].get_pin_label())
+            widget.setText(device.gpios[i].get_pin_label())
             xpos = 0
             #widget.move(self.offset[0], self.offset[1] + ypos + i*self.ygap +3)
             widget.show()

@@ -152,6 +152,9 @@ class RR_Device():
             elif (self.microcontroller == 3):
                 gpio.pin_number = constant.mega2560_pin_idx[i]
                 gpio.pin_label = constant.mega2560_pin_label[i]
+            elif (self.microcontroller == 3):
+                gpio.pin_number = constant.atmega328p_pin_idx[i]
+                gpio.pin_label = constant.atmega328p_pin_label[i]
             else:
                 gpio.pin_number = constant.pro_micro_pin_idx[i]
                 gpio.pin_label = constant.pro_micro_pin_label[i]
@@ -169,6 +172,9 @@ class RR_Device():
             elif (microcontroller == 3):
                 gpio.pin_number = constant.mega2560_pin_idx[i]
                 gpio.pin_label = constant.mega2560_pin_label[i]
+            elif (microcontroller == 1):                
+                gpio.pin_number = constant.atmega328p_pin_idx[i]
+                gpio.pin_label = constant.atmega328p_pin_label[i]
             else:
                 gpio.pin_number = constant.pro_micro_pin_idx[i]
                 gpio.pin_label = constant.pro_micro_pin_label[i]

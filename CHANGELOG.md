@@ -1,3 +1,8 @@
+# v1.0.5 (11-06-2021)
+- More secondary, non-HID devices now supported
+    - Atmega328 (Arduino Uno)
+    - Atmega2560 (Arduino Mega) *66 inputs on this monster
+    
 # v1.0.4 (26-04-2021)
 - Button matrices of up to 16x16 are now supported
 
