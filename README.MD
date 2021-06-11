@@ -34,6 +34,18 @@ All changes are instantly applied to the device, but will revert when the device
 
 Pins D2 and D3 (ATMEGA32U4) are special cases as they are used for communication between devices. If no child devices are connected they **should** be assignable and work normally, though this hasn't been tested.
 
+## Supported microcontrollers
+- HID master devices
+    - ATMEGA32U4 (eg. Arduino Pro Micro)
+    - ESP32 (bluetooth only, no USB HID)
+
+- Secondary slave devices
+    - ATMEAGA32U4
+    - ESP32
+    - ATMEGA2560 (eg Arduino Mega 2560)
+    - ATMEGA328  (eg Arduino Uno)
+    
+
 **Choose Device**: Will list connected devices if you are connected to device address 0 using USB and other devices have unique addresses 1..255.
 
 Choose a device from this dropdown to configure it.
