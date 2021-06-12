@@ -33,3 +33,7 @@
 
 
 ## Known Bugs
+
+- ESP32 limited to 16 inputs (will be updated soon now that more inputs are implemented in GUI and i2c code)
+
+- Applying "RESERVED" tag manually does not wipe config from pins and so causes weirdness as it was not initially designed as a user applied tag but one automatically applied when a pin is assigned to a matrix so users know not to use it. This will be fixed soon to be more intuitive but in the meantime don't set pins to RESERVED, it doesn't do anything that leaving a pin with no assigned button does.
