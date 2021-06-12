@@ -40,11 +40,11 @@ Pins D2 and D3 (ATMEGA32U4) are special cases as they are used for communication
     - ESP32 (bluetooth only, no USB HID)
 
 - Secondary slave devices
-    - ATMEAGA32U4
+    - ATMEGA32U4
     - ESP32
     - ATMEGA2560 (eg Arduino Mega 2560)
     - ATMEGA328  (eg Arduino Uno)
-    
+
 
 **Choose Device**: Will list connected devices if you are connected to device address 0 using USB and other devices have unique addresses 1..255.
 

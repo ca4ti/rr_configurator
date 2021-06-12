@@ -14,8 +14,6 @@
 - confirmed rotary encoder support
 
 - expanded compatibility
-    - other atmega32u4 based boards
-    - atmega328 & atmega2560 boards
     - Teensy boards
     - easy way for users to add boards themselves?
 
