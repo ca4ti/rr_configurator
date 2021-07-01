@@ -149,6 +149,9 @@ class RR_Device():
             if (self.microcontroller == 4):
                 gpio.pin_number = constant.esp32_pin_idx[i]
                 gpio.pin_label = None  #constant.esp32_pin_label[i]
+            if (self.microcontroller == 5):
+                gpio.pin_number = constant.rp2040_pin_idx[i]
+                gpio.pin_label = None  #constant.esp32_pin_label[i]
             elif (self.microcontroller == 3):
                 gpio.pin_number = constant.mega2560_pin_idx[i]
                 gpio.pin_label = constant.mega2560_pin_label[i]
@@ -161,13 +164,16 @@ class RR_Device():
             self.gpios.append(gpio)
 
     def init_gpios_forced(self, microcontroller):
-        print("Generating new gpios for microctonrooller " + str(microcontroller))
+        print("Generating new gpios for microcontroller " + str(microcontroller))
         self.gpios = []
         for i in range(0, constant.get_pin_label_count(microcontroller)):
             gpio = RR_GPIO(self.address, i)
             #print("MICROCONTROLLER: " + str(self.microcontroller))
             if (microcontroller == 4):
                 gpio.pin_number = constant.esp32_pin_idx[i]
+                gpio.pin_label = None  #constant.esp32_pin_label[i]
+            if (microcontroller == 5):
+                gpio.pin_number = constant.rp2040_pin_idx[i]
                 gpio.pin_label = None  #constant.esp32_pin_label[i]
             elif (microcontroller == 3):
                 gpio.pin_number = constant.mega2560_pin_idx[i]

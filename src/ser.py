@@ -126,7 +126,7 @@ class SerialConnection:
 
                 cnt = 0
                 for t in text:
-                    print(str(cnt) + "\t" + str(t))
+                    print(str(cnt) + "\t" + str(t) + "\t" + chr(t))
                     cnt += 1
 
             elif text[0] == constant.HEADER_HANDSHAKE_RESPONSE:
