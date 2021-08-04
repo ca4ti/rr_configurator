@@ -17,42 +17,48 @@ class GUI_EncoderPage():
         self.grid = QGridLayout()
 
         device = self.win.current_device
+        self.encoders = device.encoders
 
 
-        self.grid.addWidget(QLabel("Pin A"), 1, 0, 1, 1)
-        self.grid.addWidget(QLabel("Pin B"), 1, 1, 1, 1)
-        self.grid.addWidget(QLabel("Digital"), 1, 2, 1, 1)
-        self.grid.addWidget(QLabel("Left Assignment"), 1, 3, 1, 1)
-        self.grid.addWidget(QLabel("Right Assignment"), 1, 4, 1, 1)
+        self.grid.addWidget(QLabel("Pin A"), 1, 1, 1, 1)
+        self.grid.addWidget(QLabel("Pin B"), 1, 2, 1, 1)
+        # self.grid.addWidget(QLabel("Digital"), 1, 3, 1, 1)
+        self.grid.addWidget(QLabel("Left Assignment"), 1, 4, 1, 1)
+        self.grid.addWidget(QLabel("Right Assignment"), 1, 5, 1, 1)
 
-        self.pin_A_combo_box = QComboBox()
-        self.pin_A_combo_box.setGeometry(200, 150, 120, 30)
-        self.pin_A_combo_box.activated[str].connect(self.on_pin_A_combo_change)
-        self.pin_A_combo_box.addItems(self.win.current_device.get_pin_label_list())
-        self.grid.addWidget(self.pin_A_combo_box, 2, 0, 1, 1)
-        
-        self.pin_B_combo_box = QComboBox()
-        self.pin_B_combo_box.setGeometry(200, 150, 120, 30)
-        self.pin_B_combo_box.activated[str].connect(self.on_pin_A_combo_change)
-        self.pin_B_combo_box.addItems(self.win.current_device.get_pin_label_list())
-        self.grid.addWidget(self.pin_B_combo_box, 2, 1, 1, 1)
+        for i in range(0, len(self.encoders)):
+            self.grid.addWidget(QLabel("Encoder " + str(i)), 2+i, 0, 1, 1)
 
-        self.is_digital = QCheckBox()
-        self.grid.addWidget(self.is_digital, 2, 2, 1, 1)
+            self.encoders[i].widgets["pin_a_combo_box"] = QComboBox()
 
-        self.left_assignment_combo_box = QComboBox()
-        self.left_assignment_combo_box.setGeometry(200, 150, 120, 30)
-        self.left_assignment_combo_box.activated[str].connect(partial(self.on_left_assignment_combo_change, 0))
-        
-        self.left_assignment_combo_box.addItems(constant.list_assigned_input)
-        self.grid.addWidget(self.left_assignment_combo_box, 2, 3, 1, 1)
-        
-        self.right_assignment_combo_box = QComboBox()
-        self.right_assignment_combo_box.setGeometry(200, 150, 120, 30)
-        self.right_assignment_combo_box.activated[str].connect(self.on_right_assignment_combo_change)
-        self.right_assignment_combo_box.addItems(constant.list_assigned_input)
-        self.grid.addWidget(self.right_assignment_combo_box, 2, 4, 1, 1)
+            self.pin_A_combo_box = QComboBox()
+            self.encoders[i].widgets["pin_a_combo_box"].setGeometry(200, 150, 120, 30)
+            self.encoders[i].widgets["pin_a_combo_box"].activated[str].connect(partial(self.on_pin_A_combo_change, i))
+            self.encoders[i].widgets["pin_a_combo_box"].addItem("N/A")
+            self.encoders[i].widgets["pin_a_combo_box"].addItems(self.win.current_device.get_pin_label_list())
+            self.grid.addWidget(self.encoders[i].widgets["pin_a_combo_box"], 2+i, 1, 1, 1)
+            
+            self.encoders[i].widgets["pin_b_combo_box"] = QComboBox()
+            self.encoders[i].widgets["pin_b_combo_box"].setGeometry(200, 150, 120, 30)
+            self.encoders[i].widgets["pin_b_combo_box"].activated[str].connect(partial(self.on_pin_B_combo_change, i))
+            self.encoders[i].widgets["pin_b_combo_box"].addItem("N/A")
+            self.encoders[i].widgets["pin_b_combo_box"].addItems(self.win.current_device.get_pin_label_list())
+            self.grid.addWidget(self.encoders[i].widgets["pin_b_combo_box"], 2+i, 2, 1, 1)
 
+            self.encoders[i].widgets["left_assignment_combo_box"] = QComboBox()
+            self.encoders[i].widgets["left_assignment_combo_box"].setGeometry(200, 150, 120, 30)
+            self.encoders[i].widgets["left_assignment_combo_box"].activated[str].connect(partial(self.on_left_assignment_combo_change, i))
+            
+            self.encoders[i].widgets["left_assignment_combo_box"].addItems(constant.list_assigned_input)
+            self.grid.addWidget(self.encoders[i].widgets["left_assignment_combo_box"], 2+i, 4, 1, 1)
+            
+            self.encoders[i].widgets["right_assignment_combo_box"] = QComboBox()
+            self.encoders[i].widgets["right_assignment_combo_box"].setGeometry(200, 150, 120, 30)
+            self.encoders[i].widgets["right_assignment_combo_box"].activated[str].connect(partial(self.on_right_assignment_combo_change, i))
+            self.encoders[i].widgets["right_assignment_combo_box"].addItems(constant.list_assigned_input)
+            self.grid.addWidget(self.encoders[i].widgets["right_assignment_combo_box"], 2+i, 5, 1, 1)
+
+        self.grid.addWidget(QLabel(""), 7, 5, 10, 5)
 
         #self.grid.parent = self.layout
         self.frame.setFixedHeight(444)
@@ -60,30 +66,39 @@ class GUI_EncoderPage():
         self.frame.setLayout(self.grid)
       
 
-    def on_pin_A_combo_change(self):
-        pass
+    def on_pin_A_combo_change(self, encoderIdx):
+        self.encoders.set_pin_a(self.encoders[encoderIdx].widgets["pin_a_combo_box"].currentIndex())
 
-    def on_pin_B_combo_change(self):
-        pass
+        self.win.current_device.set_reserved_pin(self.encoders.get_pin_a())
+        self.win.device_page.update_gpio_controls()    
+        self.win.send_encoder_config_update()
+
+    def on_pin_B_combo_change(self, encoderIdx):
+        self.encoders.set_pin_b(self.encoders[encoderIdx].widgets["pin_b_combo_box"].currentIndex())
+        
+        self.win.current_device.set_reserved_pin(self.encoders.get_pin_b())
+        self.win.device_page.update_gpio_controls()    
+        self.win.send_encoder_config_update()  
 
     def on_left_assignment_combo_change(self, encoderIdx):
-        pass
+        self.encoders.set_left_assignment(self.encoders[encoderIdx].widgets["left_assignment_combo_box"].currentIndex())
+        self.win.send_encoder_config_update()  
 
-    def on_right_assignment_combo_change(self):
-        pass
-
-    def pin_is_in_matrix(self, pin):
-        for i in range(0, 16):
-            if self.win.current_device.get_matrix_row_pin(i) == pin:
-                return True
-            if self.win.current_device.get_matrix_col_pin(i) == pin:
-                return True
-        return False
+    def on_right_assignment_combo_change(self, encoderIdx):
+        self.encoders.set_right_assignment(self.encoders[encoderIdx].widgets["right_assignment_combo_box"].currentIndex())
+        self.win.send_encoder_config_update()  
+    
 
     def UpdateEncoderGUIValues(self):
         print("GUI UPDATE")
-        device = self.win.current_device
+        #device = self.win.current_device
         
+        for i in range(0, len(self.encoders)):
+            self.encoders[i].widgets["pin_a_combo_box"].setCurrentIndex(self.encoders[i].get_pin_a())
+            self.encoders[i].widgets["pin_b_combo_box"].setCurrentIndex(self.encoders[i].get_pin_b())
+
+            self.encoders[i].widgets["left_assignment_combo_box"].setCurrentIndex(self.encoders[i].get_left_assignment())
+            self.encoders[i].widgets["right_assignment_combo_box"].setCurrentIndex(self.encoders[i].get_right_assignment())
         
 
     def hide(self):

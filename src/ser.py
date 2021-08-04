@@ -17,6 +17,7 @@ class SerAction(Enum):
     WAITING_ON_GPIO_UPDATE_CONFIRMATION = 4
     WAITING_ON_MATRIX_UPDATE_CONFIRMATION = 5
     WAITING_ON_RESET_TO_DEFAULTS_CONFIRMATION = 6
+    WAITING_ON_ENCODER_UPDATE_CONFIRMATION = 7
 
 
 HANDSHAKE_TIMEOUT = 2
@@ -197,6 +198,12 @@ class SerialConnection:
             if time.time() - self.actionStartTime > 0.2:
                 print("config update failed")
                 self.try_resend_config_update_packet()
+
+        elif self.action == SerAction.WAITING_ON_ENCODER_UPDATE_CONFIRMATION:
+
+            if time.time() - self.actionStartTime > 0.2:
+                print("encoder config update failed")
+                self.try_resend_encoder_update_packet()
 
         elif self.action == SerAction.WAITING_ON_MATRIX_UPDATE_CONFIRMATION:
 
@@ -436,6 +443,17 @@ class SerialConnection:
 
         self.win.device_page.update_gpio_controls()
 
+        print("Receiving Encoder Config") # 4 groups of 10 bytes each
+        for enc in range(0, 4):
+            encoder = self.win.current_device.encoders[enc]
+            encoder.set_pin_a(data[current_byte + 0])
+            encoder.set_pin_b(data[current_byte + 1])
+            encoder.set_left_assignment(data[current_byte + 2])
+            encoder.set_right_assignment(data[current_byte + 3])
+            print(str(enc) + " a:" + str(data[current_byte + 0])+ " b:" + str(data[current_byte + 1]))
+            
+            current_byte += 10
+
         print("Receiving Matrix Config")
 
 
@@ -443,6 +461,7 @@ class SerialConnection:
         print("*** rows ***")
         for i in range(0, 16):            
             pin = data[current_byte]
+            
             print(str(current_byte) + "\t" + str(data[current_byte]))
             self.win.current_device.set_matrix_row_pin(i, pin)
 
@@ -503,9 +522,39 @@ class SerialConnection:
         self.serial.write(b)
         self.start_action(SerAction.WAITING_ON_GPIO_UPDATE_CONFIRMATION)
 
+    def send_encoder_config_update(self, encoder_index):
+        print("Sending Config Update for encoder " + str(encoder_index))
+        encoder = self.win.current_device.encoders[encoder_index]
+        ba = bytearray()
+        ba.append(constant.HEADER_SEND_ENCODER_CONFIG_UPDATE)
+        ba.append(encoder_index)
+        ba.append(encoder.get_pin_a())
+        ba.append(encoder.get_pin_b())
+        ba.append(encoder.get_left_assignment())
+        ba.append(encoder.get_right_assignment())
+
+        ba.append(0)
+        ba.append(0)
+        ba.append(0)
+        ba.append(0)
+        ba.append(0)
+        ba.append(0)
+
+        ba.append(ord('\r'))
+        ba.append(ord('\n')) # 14 bytes total
+
+        b = bytes(ba)
+        self.config_update_packet = b # store in case need to resend
+        self.serial.write(b)
+        self.start_action(SerAction.WAITING_ON_ENCODER_UPDATE_CONFIRMATION)
+
     def try_resend_config_update_packet(self):
         self.serial.write(self.config_update_packet)
         self.start_action(SerAction.WAITING_ON_GPIO_UPDATE_CONFIRMATION)
+
+    def try_resend_encoder_update_packet(self):
+        self.serial.write(self.config_update_packet)
+        self.start_action(SerAction.WAITING_ON_ENCODER_UPDATE_CONFIRMATION)
 
     def try_resend_matrix_config_update_packet(self):
         self.serial.write(self.config_update_packet)

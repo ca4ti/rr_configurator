@@ -10,6 +10,10 @@ class RR_Device():
         self.gpios = []
         self.sub_devices = []
 
+        self.encoders = []
+        for i in range(0, 4):
+            self.encoders.append(RR_ENCODER(i))
+
         self.matrix_row_pins = []
         self.matrix_col_pins = []
         for i in range(0, 16):
@@ -186,6 +190,58 @@ class RR_Device():
                 gpio.pin_label = constant.pro_micro_pin_label[i]
             self.gpios.append(gpio)
 
+class RR_ENCODER():
+    def __init__(self, idx):
+        self.pin_a = None
+        self.pin_b = None
+        self.is_digital = True # analog (Absolute) mode not implemented yet isDigital LOCKED
+        self.left_assignment = constant.NOAXIS
+        self.right_assignment = constant.NOAXIS
+        
+        # Absolute mode not implemented yet
+        self.absolute_min = 0
+        self.absolute_max = 0
+        self.absolute_initial = 0
+        self.absolute_increment = 0
+        self.absolute_wrap = False
+
+        self.widgets = {}
+
+    def set_pin_a(self, pin_a):
+        if pin_a == 255:
+            self.pin_a = 0
+        else:
+            self.pin_a = pin_a+1
+
+    def get_pin_a(self):
+        return self.pin_a
+
+    def set_pin_b(self, pin_b):
+        if pin_b == 255:
+            self.pin_b = 0
+        else:
+            self.pin_b = pin_b+1
+
+    def get_pin_b(self):
+        return self.pin_b
+
+    def set_is_digital(self, is_digital):
+        self.is_digital = is_digital
+
+    def get_is_digital(self):
+        return self.is_digital
+
+    def set_left_assignment(self, left_assignment):
+        self.left_assignment = left_assignment
+
+    def get_left_assignment(self):
+        return self.left_assignment
+
+    def set_right_assignment(self, right_assignment):
+        self.right_assignment = right_assignment
+
+    def get_right_assignment(self):
+        return self.right_assignment
 
 class RR_GPIO():
     def __init__(self, device_address, idx):
