@@ -60,6 +60,7 @@ class Window(QWidget):
     def reset(self, error=""):
         self.device_page.hide()
         self.device_page.matrix.hide()
+        self.device_page.encoder.hide()
         self.current_device = None
         self.ser.close()
         self.connect_page.show()

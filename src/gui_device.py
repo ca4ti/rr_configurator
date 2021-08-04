@@ -3,10 +3,11 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QPushButton, QLabel, QMenuBar, QComboBox, QCheckBox, QLineEdit, QGridLayout, QScrollArea, QFormLayout, QGroupBox, QVBoxLayout
 from PyQt5.QtGui import QIntValidator
 from functools import partial
-import constant, gui_button_matrix
+import constant, gui_button_matrix, gui_encoder
 
 MODE_NORMAL = 0
 MODE_MATRIX = 1
+MODE_ENCODER = 2
 
 class GUI_DevicePage():
     def __init__(self, win):
@@ -61,6 +62,13 @@ class GUI_DevicePage():
         widget.show()
         widget.clicked.connect(lambda: self.toggle_button_matrix_view())
         device.widgets["btn_button_matrix"] = widget  
+
+        widget = QPushButton(self.win)
+        widget.setText("Encoders")
+        #widget.move(self.offset[0] + 620, self.offset[1]+25)
+        widget.show()
+        widget.clicked.connect(lambda: self.toggle_encoder_view())
+        device.widgets["btn_encoders"] = widget  
 
         # Device Details
         widget = QLabel(self.win)
@@ -137,13 +145,14 @@ class GUI_DevicePage():
         self.topButtonsGridLayout.addWidget(device.widgets["label_firmware_version"], 2, 2, 1, 1)
 
         self.topButtonsGridLayout.addWidget(device.widgets["label_device_address"], 0, 3, 1, 1)
-        self.topButtonsGridLayout.addWidget(device.widgets["input_device_address"], 0, 4, 1, 1)
+        self.topButtonsGridLayout.addWidget(device.widgets["input_device_address"], 0, 4, 1, 2)
 
-        self.topButtonsGridLayout.addWidget(device.widgets["btn_disconnect"], 0, 5, 1, 1)
-        self.topButtonsGridLayout.addWidget(device.widgets["btn_commit_to_eeprom"], 1, 5, 1, 1)
-        self.topButtonsGridLayout.addWidget(device.widgets["btn_reset_to_defaults"], 2, 5, 1, 1)
+        self.topButtonsGridLayout.addWidget(device.widgets["btn_disconnect"], 0, 6, 1, 1)
+        self.topButtonsGridLayout.addWidget(device.widgets["btn_commit_to_eeprom"], 1, 6, 1, 1)
+        self.topButtonsGridLayout.addWidget(device.widgets["btn_reset_to_defaults"], 2, 6, 1, 1)
 
         self.topButtonsGridLayout.addWidget(device.widgets["btn_button_matrix"], 2, 3, 1, 1)
+        self.topButtonsGridLayout.addWidget(device.widgets["btn_encoders"], 2, 4, 1, 1)
 
 
         self.layout.addLayout(self.topButtonsGridLayout)
@@ -257,6 +266,11 @@ class GUI_DevicePage():
         self.matrix.init_matrix_gui()
         self.layout.addWidget(self.matrix.frame)
         self.matrix.hide()
+
+        self.encoder = gui_encoder.GUI_EncoderPage(self.win)
+        self.encoder.init_encoder_gui()
+        self.layout.addWidget(self.encoder.frame)
+        self.encoder.hide()
 
     def LoadGPIOControls(self):
         device = self.win.current_device
@@ -611,19 +625,30 @@ class GUI_DevicePage():
             self.mode = MODE_MATRIX
             self.matrix.UpdateMatrixGUIValues()
             self.win.current_device.widgets["btn_button_matrix"].setText("BACK")
+            self.win.current_device.widgets["btn_encoders"].hide()
             #self.matrix.init_matrix_gui()
         elif self.mode == MODE_MATRIX:            
             self.matrix.hide()
             self.gpioScrollArea.show()
             self.mode = MODE_NORMAL
-            self.win.current_device.widgets["btn_button_matrix"].setText("Button Matrix")
-            
+            self.win.current_device.widgets["btn_button_matrix"].setText("Button Matrix")          
+            self.win.current_device.widgets["btn_encoders"].show()
 
-        # self.matrix = gui_button_matrix.GUI_ButtonMatrixPage(self.win)
-        # self.matrix.init_matrix_gui()
-        # self.layout.addLayout(self.matrix.grid)
+    def toggle_encoder_view(self):
+        if self.mode == MODE_NORMAL:
+            self.gpioScrollArea.hide()
+            self.encoder.show()
+            self.mode = MODE_ENCODER
+            self.encoder.UpdateEncoderGUIValues()
+            self.win.current_device.widgets["btn_encoders"].setText("BACK")
+            self.win.current_device.widgets["btn_button_matrix"].hide()
+        elif self.mode == MODE_ENCODER:            
+            self.encoder.hide()
+            self.gpioScrollArea.show()
+            self.mode = MODE_NORMAL
+            self.win.current_device.widgets["btn_encoders"].setText("Encoders")   
+            self.win.current_device.widgets["btn_button_matrix"].show()       
         
-        pass
 
     
 
