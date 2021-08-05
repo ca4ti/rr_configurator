@@ -161,8 +161,18 @@ class SerialConnection:
                 for t in text:
                     print(str(cnt) + "\t" + str(t))
                     cnt += 1
-                # self.decode_gpio_config_packet(text)
-                self.start_action(SerAction.CONNECTED)                
+                    
+                self.start_action(SerAction.CONNECTED)       
+
+            elif text[0] == constant.HEADER_SEND_ENCODER_CONFIG_UPDATE_RESPONSE:
+                print("Received encoder update confirmation")
+                print(len(text))
+                cnt = 0
+                for t in text:
+                    print(str(cnt) + "\t" + str(t))
+                    cnt += 1
+                    
+                self.start_action(SerAction.CONNECTED)                 
 
             elif text[0] == constant.HEADER_SEND_MATRIX_CONFIG_UPDATE_RESPONSE:
                 print("Received config update confirmation")
@@ -450,7 +460,7 @@ class SerialConnection:
             encoder.set_pin_b(data[current_byte + 1])
             encoder.set_left_assignment(data[current_byte + 2])
             encoder.set_right_assignment(data[current_byte + 3])
-            print(str(enc) + " a:" + str(data[current_byte + 0])+ " b:" + str(data[current_byte + 1]))
+            print(str(enc) + " a:" + str(data[current_byte + 0])+ "\nb:" + str(data[current_byte + 1]) + "\nl:" + str(data[current_byte + 2]) + "\nr:" + str(data[current_byte + 3]) + "\npA:" + str(data[current_byte + 4]) + "\npB:" + str(data[current_byte + 5]))
             
             current_byte += 10
 
@@ -528,8 +538,14 @@ class SerialConnection:
         ba = bytearray()
         ba.append(constant.HEADER_SEND_ENCODER_CONFIG_UPDATE)
         ba.append(encoder_index)
-        ba.append(encoder.get_pin_a())
-        ba.append(encoder.get_pin_b())
+        pin_a = encoder.get_pin_a() - 1
+        if pin_a < 0:
+            pin_a = 255
+        ba.append(pin_a)
+        pin_b = encoder.get_pin_b() - 1
+        if pin_b < 0:
+            pin_b = 255
+        ba.append(pin_b)
         ba.append(encoder.get_left_assignment())
         ba.append(encoder.get_right_assignment())
 

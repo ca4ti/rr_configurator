@@ -67,26 +67,29 @@ class GUI_EncoderPage():
       
 
     def on_pin_A_combo_change(self, encoderIdx):
-        self.encoders.set_pin_a(self.encoders[encoderIdx].widgets["pin_a_combo_box"].currentIndex())
+        pin_idx = self.encoders[encoderIdx].widgets["pin_a_combo_box"].currentIndex()-1
+        self.encoders[encoderIdx].set_pin_a(pin_idx)
 
-        self.win.current_device.set_reserved_pin(self.encoders.get_pin_a())
+        self.win.current_device.set_reserved_pin(pin_idx)
         self.win.device_page.update_gpio_controls()    
-        self.win.send_encoder_config_update()
+        self.win.send_encoder_config_update(encoderIdx)
 
     def on_pin_B_combo_change(self, encoderIdx):
-        self.encoders.set_pin_b(self.encoders[encoderIdx].widgets["pin_b_combo_box"].currentIndex())
+        pin_idx = self.encoders[encoderIdx].widgets["pin_b_combo_box"].currentIndex()-1
+        self.encoders[encoderIdx].set_pin_b(pin_idx)
         
-        self.win.current_device.set_reserved_pin(self.encoders.get_pin_b())
+        self.win.current_device.set_reserved_pin(pin_idx)
+
         self.win.device_page.update_gpio_controls()    
-        self.win.send_encoder_config_update()  
+        self.win.send_encoder_config_update(encoderIdx)  
 
     def on_left_assignment_combo_change(self, encoderIdx):
-        self.encoders.set_left_assignment(self.encoders[encoderIdx].widgets["left_assignment_combo_box"].currentIndex())
-        self.win.send_encoder_config_update()  
+        self.encoders[encoderIdx].set_left_assignment(self.encoders[encoderIdx].widgets["left_assignment_combo_box"].currentIndex())
+        self.win.send_encoder_config_update(encoderIdx)  
 
     def on_right_assignment_combo_change(self, encoderIdx):
-        self.encoders.set_right_assignment(self.encoders[encoderIdx].widgets["right_assignment_combo_box"].currentIndex())
-        self.win.send_encoder_config_update()  
+        self.encoders[encoderIdx].set_right_assignment(self.encoders[encoderIdx].widgets["right_assignment_combo_box"].currentIndex())
+        self.win.send_encoder_config_update(encoderIdx)  
     
 
     def UpdateEncoderGUIValues(self):
