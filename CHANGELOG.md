@@ -1,3 +1,7 @@
+# v1.0.6 (06-08-2021)
+- Added rotary encoder support
+    - 4 encoders max, per device (more with subdevices)
+
 # v1.0.5 (11-06-2021)
 - More secondary, non-HID devices now supported
     - Atmega328 (Arduino Uno)
