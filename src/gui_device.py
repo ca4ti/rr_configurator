@@ -434,6 +434,7 @@ class GUI_DevicePage():
                 c += 1
 
     def on_change_selected_device(self, sub_device_index):
+        self.return_to_normal_mode()
         device = self.win.current_device
         self.win.current_device.selected_sub_device = sub_device_index
         #device.widgets["label_device_name"].setText("Device Name:")
@@ -633,6 +634,16 @@ class GUI_DevicePage():
             self.mode = MODE_NORMAL
             self.win.current_device.widgets["btn_button_matrix"].setText("Button Matrix")          
             self.win.current_device.widgets["btn_encoders"].show()
+
+    def return_to_normal_mode(self):
+        self.matrix.hide()
+        self.encoder.hide()
+        self.gpioScrollArea.show()
+        self.mode = MODE_NORMAL
+        self.win.current_device.widgets["btn_button_matrix"].setText("Button Matrix")  
+        self.win.current_device.widgets["btn_encoders"].setText("Encoders")   
+        self.win.current_device.widgets["btn_button_matrix"].show()       
+        self.win.current_device.widgets["btn_encoders"].show()
 
     def toggle_encoder_view(self):
         if self.mode == MODE_NORMAL:
