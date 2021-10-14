@@ -22,6 +22,23 @@ You are now connected and can configure your device.
 
 ![](./main_page.jpg)
 
+### on Linux
+If you want to use this software on any Linux distribution, first make sure that you have Python 3 installed and then create a virtual environment in `src` directory of this project by running the command below in terminal:
+
+`python3 -m venv venvname`
+
+Then activate the virtual environment by the following command:
+
+`source venv/bin/activate`
+
+Now you are inside the venv you just created. You need to install rr_configurator's dependencies before running it. To do so enter the following command:
+
+`pip install pyqt5 pyserial`
+
+If everything went fine, you can run the app. Remeber that accessing serial ports requires superuser priviliges!
+
+`sudo python3 rr_configurator.py`
+
 ## Tips
 
 The device that you intend to be the parent device that will connecd to the USB has to be assigned address 0. Only a device with address 0 will attempt to connect to other devices connected to it and send HID joystick inputs to the computer.
