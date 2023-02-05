@@ -1,5 +1,10 @@
 # RealRobots Configurator
 
+## UPDATE ##
+
+If you're using an ESP32 or RP2040 based microcontroller then use the new, web based version instead at https://realrobots.net/configurator
+
+
 ## What is it?
 
 The configurator is an app that runs on a PC and communicates with the RealRobots Modular [game controller firmware](https://gitlab.com/realrobots/rr_controller), allowing configuration of all analog and digital inputs as Joystick axis and buttons.
