@@ -33,7 +33,7 @@ class GUI_DevicePage():
 
         self.groupBox.show()
         self.gpioScrollArea.show()
-
+        print("INITIATING")
 
         widget = QPushButton(self.win)
         widget.setText("Disconnect")
@@ -589,7 +589,7 @@ class GUI_DevicePage():
         for i in range(0, len(self.win.current_device.gpios)):  
             
             gpio = device.gpios[i]
-            
+            print(gpio.widgets)
             gpio.widgets["pin_mode"].setCurrentIndex(gpio.pin_mode)
 
             if gpio.pin_mode == constant.OUTPUT:

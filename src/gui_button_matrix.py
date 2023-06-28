@@ -78,7 +78,7 @@ class GUI_ButtonMatrixPage():
                     device.matrix_state_widgets.append(widget)
 
                     widget = QPushButton("Button 1")
-                    widget.setFont(QFont('Condensed', 6.5))
+                    #widget.setFont(QFont('Condensed', 6.5))
                     self.grid.addWidget(widget, y+2, x*2+3)
                     # device.widgets["matrix_assignment_" + str(x-1) + "," + str(y-1)] = widget
                     device.matrix_assignment_widgets.append(widget)
